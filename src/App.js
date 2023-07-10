@@ -1,11 +1,9 @@
 import React from 'react';
-import Header from "./Components/Header";
+import RoutesApp from './routes';
 
 function App() {
 	return (
-		<React.Fragment>
-			<Header/>
-		</React.Fragment>
+		<RoutesApp />
 	);
 }
 

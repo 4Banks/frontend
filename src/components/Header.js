@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import logo from "../Assets/logo.svg";
-import "../Styles/main.css";
+import logo from "../assets/logo.svg";
+import "../styles/main.css";
 
 function Header() {
 	const navRef = useRef();
@@ -18,16 +18,16 @@ function Header() {
 			<nav ref={navRef}>
 				<ul>
 					<li>
-						<a href="/#">Home</a>
+						<a href="/">Home</a>
 					</li>
 					<li>
-						<a href="/#">Análise de dados</a>
+						<a href="/analise">Análise de dados</a>
 					</li>
 					<li>
-						<a href="/#">Quem somos</a>
+						<a href="/quemsomos">Quem somos</a>
 					</li>
 					<li>
-						<a href="/#">Documentação</a>
+						<a href="/documentacao">Documentação</a>
 					</li>
 				</ul>
 				<button className="nav-btn nav-close-btn" onClick={showHeader}>
