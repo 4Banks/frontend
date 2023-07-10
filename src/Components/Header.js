@@ -3,10 +3,10 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../Assets/logo.svg";
 import "../Styles/main.css";
 
-function Navbar() {
+function Header() {
 	const navRef = useRef();
 
-	const showNavbar = () => {
+	const showHeader = () => {
 		navRef.current.classList.toggle(
 			"responsive_nav"
 		);
@@ -30,17 +30,17 @@ function Navbar() {
 						<a href="/#">Documentação</a>
 					</li>
 				</ul>
-				<button className="nav-btn nav-close-btn" onClick={showNavbar}>
+				<button className="nav-btn nav-close-btn" onClick={showHeader}>
 					<FaTimes />
 				</button>
 			</nav>
 			<button
 				className="nav-btn"
-				onClick={showNavbar}>
+				onClick={showHeader}>
 				<FaBars />
 			</button>
 		</header>
 	);
 }
 
-export default Navbar;
+export default Header;
