@@ -39,6 +39,11 @@ nav ul li {
     height: 100%;
 }
 
+nav ul li.active {
+    background-color: var(--quaternaryColor);
+    border-radius: 4px;
+}
+
 nav a {
     color: var(--secondaryColor);
     text-decoration: none;
