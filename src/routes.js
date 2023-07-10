@@ -5,6 +5,7 @@ import Home from "./pages/home";
 import Documentation from './pages/documentation';
 import DataAnalysis from './pages/data-analysis';
 import AboutUs from './pages/about-us';
+import Footer from './components/Footer';
 
 function RoutesApp() {
   return (
@@ -16,6 +17,7 @@ function RoutesApp() {
         <Route path="/analise" element={<DataAnalysis />} />
         <Route path="/quemsomos" element={<AboutUs />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

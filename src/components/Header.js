@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/logo.svg";
-import "../styles/main.css";
+import "../styles/global.css";
+import "../styles/header.css";
 
 function Header() {
 	const navRef = useRef();
