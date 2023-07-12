@@ -21,7 +21,7 @@
 .home_intro_info_text {
     width: 500px;
     height: 350px;
-    font-size: 15px;
+    font-size: 1.1rem;
     text-align: justify;
     color: var(--textColor);
     margin-top: 30px;
@@ -40,7 +40,7 @@
     width: 160px;
     height: 42px;
     border-radius: 15px;
-    color: var(--quaternaryColor);
+    color: var(--mainColor);
     font-size: 15px;
     font-weight: bold;
     display: flex;
