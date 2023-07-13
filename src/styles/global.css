@@ -13,3 +13,7 @@
     --quaternaryColor: #cdeff9;
     --textColor: #5c5f60;
 }
+
+h1 {
+    color: var(--secondaryColor);
+}
