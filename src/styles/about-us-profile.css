@@ -1,0 +1,77 @@
+.about_us_profile {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    justify-content: space-between;
+}
+
+.about_us_profile_photo {
+    height: 300px;
+    width: 300px;
+    border-radius: 100%;
+}
+
+.about_us_profile_name {
+    padding-right: 15px;
+    font-size: 40px;
+    font-weight: 500;
+    color: var(--secondaryColor)
+}
+
+.about_us_profile_description {
+    margin-top: 20px;
+    width: 800px;
+    text-align: justify;
+}
+
+.linkedin-logo {
+    padding-right: 15px;
+}
+
+.about_us_profile_names_links {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin-top: 40px;
+    width: 600px;
+}
+
+@media screen and (max-width: 980px) {
+    .about_us_profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .about_us_profile_photo {
+        height: 200px;
+        width: 200px;
+    }
+    .about_us_profile_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 35px;
+        width: 80%;
+    }
+    .about_us_profile_names_links {
+        width: 100%;
+    }
+    .about_us_profile_description {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about_us_profile_name {
+        font-size: 20px;
+    }
+    .about_us_profile_description {
+        font-size: 14px;
+    }
+}
