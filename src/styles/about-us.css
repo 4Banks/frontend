@@ -1,0 +1,31 @@
+.about_us {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.about_us_intro {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    height: 130px;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.about_us_intro_text {
+    width: 800px;
+    text-align: justify;
+}
+
+@media screen and (max-width: 980px) {
+    .about_us_intro {
+        width: 80%;
+    }
+    .about_us_intro_text {
+        width: 100%;
+    }
+}
