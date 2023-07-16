@@ -1,22 +1,22 @@
-.scatter_plot {
+.bar_chart {
     display: flex;
     width: 100%;
     max-width: 1440px;
     justify-content: space-between;
 }
 
-.scatter_plot_info {
+.bar_chart_info {
     margin-top: 45px;
 }
 
-.scatter_plot_info_title {
+.bar_chart_info_title {
     font-size: 2rem;
     font-weight: 500;
     margin-bottom: 0.5em;
     color: var(--secondaryColor);
 }
 
-.scatter_plot_info_description {
+.bar_chart_info_description {
     width: 600px;
     font-size: 1.1rem;
     text-align: justify;
@@ -25,11 +25,11 @@
 }
 
 @media only screen and (max-width: 980px) {
-    .scatter_plot {
+    .bar_chart {
         flex-direction: column;
         align-items: center;
     }
-    .scatter_plot_info {
+    .bar_chart_info {
         margin-top: 0px;
         display: flex;
         flex-direction: column;
@@ -37,7 +37,7 @@
         align-items: center;
         margin-bottom: 30px;
     }
-    .scatter_plot_info_description {
+    .bar_chart_info_description {
         width: 80%;
         height: auto;
         margin-bottom: 30px;
@@ -45,7 +45,7 @@
 }
 
 @media only screen and (max-width: 600px) {
-    .scatter_plot_info_title {
+    .bar_chart_info_title {
         font-size: 1.5rem;
         font-weight: 500;
         margin-bottom: 0.5em;

@@ -4,11 +4,13 @@ import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/home.css";
 import ScatterPlot from '../../components/ScatterPlot';
+import BarChart from '../../components/BarChart';
+
 
 function Home() {
 
-  const xData = [1, 30, 5, 70, 9]; // Sample 'x' data
-  const yData = [2, 44, 6, 68, 14]; // Sample 'y' data
+  const xData = [1, 30, 5, 70, 9]; 
+  const yData = [2, 44, 6, 68, 14]; 
 
 
   return (
@@ -32,6 +34,13 @@ function Home() {
         x={xData}
         y={yData}
       />
+      <BarChart
+        title = "Gráfico de barras (Bar Chart)"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas consectetur tellus nec urna accumsan mollis. Ut pretium, lorem vitae interdum hendrerit, quam purus fermentum dolor, in ultrices nisl ipsum sed nunc. Curabitur ornare quam enim, sit amet finibus lacus efficitur ac. Etiam semper bibendum velit at pharetra. Fusce accumsan sed elit sit amet facilisis. Vestibulum dictum tempus interdum. Donec in placerat eros, ultrices consequat justo. Sed in condimentum libero."
+        x = {['Categoria A', 'Categoria B', 'Categoria C']}
+          y = {[10, 20, 5]}
+      />
+
       </div>
     </div>
   );
