@@ -3,9 +3,14 @@ import { Link } from "react-router-dom";
 import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/home.css";
-
+import ScatterPlot from '../../components/ScatterPlot';
 
 function Home() {
+
+  const xData = [1, 30, 5, 70, 9]; // Sample 'x' data
+  const yData = [2, 44, 6, 68, 14]; // Sample 'y' data
+
+
   return (
     <div>
       <div className="home">
@@ -17,8 +22,16 @@ function Home() {
               Nova análise
             </Link>
         </div>
+        <div className="home_intro_info_image_container">
         <img src={finance_home} alt="finance_home" className='home_intro_info_image'/>
         </div>
+        </div>
+        <ScatterPlot
+        title="Gráfico de dispersão (Scatter Plot)"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas consectetur tellus nec urna accumsan mollis. Ut pretium, lorem vitae interdum hendrerit, quam purus fermentum dolor, in ultrices nisl ipsum sed nunc. Curabitur ornare quam enim, sit amet finibus lacus efficitur ac. Etiam semper bibendum velit at pharetra. Fusce accumsan sed elit sit amet facilisis. Vestibulum dictum tempus interdum. Donec in placerat eros, ultrices consequat justo. Sed in condimentum libero."
+        x={xData}
+        y={yData}
+      />
       </div>
     </div>
   );
