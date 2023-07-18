@@ -68,7 +68,6 @@ const CsvUpload = () => {
 
       const data = await response.json();
       const OAUTH2_TOKEN = data.access_token;
-      console.log(OAUTH2_TOKEN);
 
       const xhr = new XMLHttpRequest();
 
