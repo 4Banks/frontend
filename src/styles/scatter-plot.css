@@ -7,6 +7,7 @@
 
 .scatter_plot_info {
     margin-top: 45px;
+    margin-left: 50px;
 }
 
 .scatter_plot_info_title {
@@ -36,6 +37,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
+        margin-left: 0px;
     }
     .scatter_plot_info_description {
         width: 80%;
