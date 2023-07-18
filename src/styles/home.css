@@ -50,7 +50,7 @@
     height: 42px;
     border-radius: 15px;
     color: var(--mainColor);
-    font-size: 15px;
+    font-size: 1.1rem;
     font-weight: bold;
     display: flex;
     align-items: center;
