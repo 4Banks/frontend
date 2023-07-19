@@ -1,0 +1,30 @@
+.exclusive_selection_container {
+    border-radius: 25px;
+    border: solid;
+    width: 350px;
+    height: 500px;
+    border-color: var(--secondaryColor);
+    margin-bottom: 30px;
+}
+
+.exclusive_selection_header_text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondaryColor);
+    margin-bottom: 10px;
+}
+
+.exclusive_selection_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px 25px 0px 0px;
+    background-color: var(--quaternaryColor);
+    padding: 15px;
+    height: 100px;
+}
+
+.exclusive_selection_body {
+    padding: 20px;
+}
