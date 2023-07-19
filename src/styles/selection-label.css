@@ -1,0 +1,28 @@
+#checkbox_item_label_img {
+    height: 15px;
+}
+
+.checkbox_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.checkbox_item_container {
+    display: flex;
+}
+
+.checkbox_item_title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--secondaryColor);
+}
+
+.popover_container {
+    width: 300px;
+    background-color: var(--quaternaryColor);
+    text-align: justify;
+    padding: 15px;
+    font-size: 1rem;
+}
