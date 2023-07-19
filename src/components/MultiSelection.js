@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { FormGroup } from '@mui/material';
 import '../styles/multi-selection.css'
 import SelectionLabel from './SelectionLabel';
+import Checkbox from '@mui/material/Checkbox';
+
 
 function MultiSelection({ headerText, imageSrc, data }) {
   return (
@@ -14,7 +16,7 @@ function MultiSelection({ headerText, imageSrc, data }) {
       <div className="multi_selection_body">
         <FormGroup>
           {data.map((item) => (
-            <SelectionLabel key={item.item} item={item.item} description={item.description} />
+            <SelectionLabel key={item.item} item={item.item} description={item.description} selectionComponent={<Checkbox />} />
           ))}
         </FormGroup>
       </div>

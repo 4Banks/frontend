@@ -2,13 +2,12 @@ import React from 'react';
 import "../styles/global.css";
 import Popover from '@mui/material/Popover';
 import { FormControlLabel } from '@mui/material';
-import Checkbox from '@mui/material/Checkbox';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import '../styles/selection-label.css'
 import "../styles/global.css";
 
 
-function SelectionLabel({item, description}) {
+function SelectionLabel({item, description, selectionComponent}) {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handlePopoverOpen = (event) => {
@@ -24,7 +23,7 @@ function SelectionLabel({item, description}) {
   return (
     <div className='checkbox_item'>
       <FormControlLabel
-        control={<Checkbox />}
+        control={selectionComponent}  
         label={
           <React.Fragment>
             <div className="checkbox_item_container">
