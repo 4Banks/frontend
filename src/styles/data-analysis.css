@@ -68,7 +68,21 @@
     margin-left: 50px;
 }
 
+.data_analysis_exclusive_selection_intro {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1440px;
+    margin-bottom: 30px;
+    margin-left: 50px;
+}
+
 .data_analysis_multi_selection_title {
+    font-size: 2.5rem;
+    color: var(--secondaryColor);
+}
+
+.data_analysis_exclusive_selection_title {
     font-size: 2.5rem;
     color: var(--secondaryColor);
 }
@@ -82,8 +96,21 @@
     margin-bottom: 30px;
 }
 
+.data_analysis_exclusive_selection_container {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
 @media only screen and (max-width: 980px) {
     .data_analysis_multi_selection_intro {
+        align-items: center;
+        margin-left: 0px;
+    }
+    .data_analysis_exclusive_selection_intro {
         align-items: center;
         margin-left: 0px;
     }
