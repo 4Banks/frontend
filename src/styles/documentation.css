@@ -1,0 +1,47 @@
+.documentation {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.documentation_intro {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    justify-content: space-between;
+    flex-direction: column;
+    margin-top: 70px;
+    margin-bottom: 30px;
+}
+
+.documentation_intro_title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--secondaryColor);
+    margin: 0px 0px 0px 30px;
+}
+
+.documentation_product_discovery_title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--secondaryColor);
+    margin: 0px 0px 0px 30px;
+}
+
+.documentation_product_discovery_subtitle {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--tertiaryColor);
+    margin: 30px;
+}
+
+.documentation_intro_text {
+    text-align: justify;
+    margin: 30px;
+}
+
+@media only screen and (max-width: 980px) {
+    .documentation_intro {
+        width: 90%;
+    }
+}
