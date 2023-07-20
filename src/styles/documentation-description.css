@@ -54,6 +54,10 @@
     .documentation_description {
         width: 90%;
     }
+    .documentation_description_main_title {
+        text-align: center;
+        margin: 0px;
+    }
     .documentation_description_info {
         display: flex;
         flex-direction: column;
