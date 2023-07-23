@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormControlLabel, Popover } from '@mui/material';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import '../styles/selection-label.css';
 import '../styles/global.css';
 
-function SelectionLabel({ value, description, selectionComponent }) {
+function SelectionLabel({ value, description, selectionComponent, isSelected, itemText }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handlePopoverOpen = (event) => {
@@ -18,14 +17,18 @@ function SelectionLabel({ value, description, selectionComponent }) {
 
   const open = Boolean(anchorEl);
 
+  const handleTextClick = (event) => {
+    event.stopPropagation(); 
+  };
+
   return (
     <div className='checkbox_item'>
       <FormControlLabel
         control={React.cloneElement(selectionComponent, { value })}
         label={
           <React.Fragment>
-            <div className="checkbox_item_container">
-              <p className='checkbox_item_title'>{value}</p>
+            <div className="checkbox_item_container" onClick={handleTextClick}>
+              <p className='checkbox_item_title'>{itemText}</p>
               <HelpRoundedIcon
                 color="primary"
                 id="checkbox_item_label_img"
@@ -35,6 +38,7 @@ function SelectionLabel({ value, description, selectionComponent }) {
             </div>
           </React.Fragment>
         }
+        checked={isSelected}
       />
       <Popover
         id="mouse-over-popover"
@@ -61,11 +65,5 @@ function SelectionLabel({ value, description, selectionComponent }) {
     </div>
   );
 }
-
-SelectionLabel.propTypes = {
-  value: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  selectionComponent: PropTypes.element.isRequired,
-};
 
 export default SelectionLabel;
