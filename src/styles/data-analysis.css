@@ -75,6 +75,10 @@
     text-decoration: none;
 }
 
+.data_analysis_upload_info {
+    margin: 25px;
+}
+
 @media only screen and (max-width: 980px) {
     .data_analysis_intro {
         flex-direction: column;

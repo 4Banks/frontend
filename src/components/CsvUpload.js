@@ -7,7 +7,7 @@ import '../styles/global.css';
 import '../styles/csv-upload.css';
 import send from '../assets/send.svg';
 
-const CsvUpload = () => {
+const CsvUpload = ({ onUploadSuccess }) => {
 
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -80,7 +80,7 @@ const CsvUpload = () => {
 
       xhr.open(
         'POST',
-        `https://storage.googleapis.com/upload/storage/v1/b/${BUCKET_NAME}/o?uploadType=media&name=datasets/${OBJECT_NAME}/${file.name}`
+        `https://storage.googleapis.com/upload/storage/v1/b/${BUCKET_NAME}/o?uploadType=media&name=${OBJECT_NAME}/${file.name}`
       );
       xhr.setRequestHeader('Authorization', `Bearer ${OAUTH2_TOKEN}`);
       xhr.setRequestHeader('Content-Type', 'text/csv');
@@ -89,6 +89,8 @@ const CsvUpload = () => {
         if (xhr.status === 200) {
           console.log('Arquivo enviado com sucesso!');
           toast.success('Arquivo enviado com sucesso!');
+          const fileNameWithoutExtension = file.name.split('.').slice(0, -1).join('.');
+          onUploadSuccess(fileId, fileNameWithoutExtension);
         } else {
           console.error('Falha ao enviar arquivo.');
           toast.error('Falha ao enviar arquivo.');
