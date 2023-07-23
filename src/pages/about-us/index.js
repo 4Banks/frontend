@@ -45,7 +45,7 @@ function AboutUs() {
           link_github="https://github.com/TiagoSanti"
         />
         <AboutUsProfile
-          name="Mentor - Matheus Mello"
+          name="Mentor - Mateus Mello"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas consectetur tellus nec urna accumsan mollis. Ut pretium, lorem vitae interdum hendrerit, quam purus fermentum dolor, in ultrices nisl ipsum sed nunc. Curabitur ornare quam enim, sit amet finibus lacus efficitur ac. Etiam semper bibendum velit at pharetra"
           url_photo={mateus_mello}
           link_linkedin="https://www.linkedin.com/in/mateuspmello/"

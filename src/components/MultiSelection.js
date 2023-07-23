@@ -1,11 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormGroup } from '@mui/material';
+import '../styles/global.css';
 import '../styles/multi-selection.css';
 import SelectionLabel from './SelectionLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-function MultiSelection({ headerText, imageSrc, data }) {
+function MultiSelection({ headerText, imageSrc, data = [], selectedItems = [], onChange }) {
+  const handleSelection = (itemKey) => {
+    const newSelectedItems = selectedItems.includes(itemKey)
+      ? selectedItems.filter((key) => key !== itemKey)
+      : [...selectedItems, itemKey];
+
+    onChange(newSelectedItems);
+  };
+
   return (
     <div className='multi_selection_container'>
       <div className="multi_selection_header">
@@ -16,10 +24,17 @@ function MultiSelection({ headerText, imageSrc, data }) {
         <FormGroup>
           {data.map((item) => (
             <SelectionLabel
-              key={item.item}
-              value={item.item}
+              key={item.key}
+              value={item.key}
               description={item.description}
-              selectionComponent={<Checkbox />}
+              selectionComponent={
+                <Checkbox
+                  checked={selectedItems.includes(item.key)}
+                  onChange={() => handleSelection(item.key)}
+                />
+              }
+              isSelected={selectedItems.includes(item.key)}
+              itemText={item.item}
             />
           ))}
         </FormGroup>
@@ -27,16 +42,5 @@ function MultiSelection({ headerText, imageSrc, data }) {
     </div>
   );
 }
-
-MultiSelection.propTypes = {
-  headerText: PropTypes.string.isRequired,
-  imageSrc: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      item: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};
 
 export default MultiSelection;

@@ -80,7 +80,7 @@ const CsvUpload = () => {
 
       xhr.open(
         'POST',
-        `https://storage.googleapis.com/upload/storage/v1/b/${BUCKET_NAME}/o?uploadType=media&name=${OBJECT_NAME}`
+        `https://storage.googleapis.com/upload/storage/v1/b/${BUCKET_NAME}/o?uploadType=media&name=datasets/${OBJECT_NAME}/${file.name}`
       );
       xhr.setRequestHeader('Authorization', `Bearer ${OAUTH2_TOKEN}`);
       xhr.setRequestHeader('Content-Type', 'text/csv');

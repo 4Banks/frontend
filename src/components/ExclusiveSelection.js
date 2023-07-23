@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { RadioGroup, FormControl } from '@mui/material';
-
+import '../styles/global.css';
 import '../styles/exclusive-selection.css';
 import SelectionLabel from './SelectionLabel';
 import Radio from '@mui/material/Radio';
 
-function ExclusiveSelection({ headerText, data }) {
-  const [selectedValue, setSelectedValue] = useState('');
-
+function ExclusiveSelection({ headerText, data, selectedValue, onChange }) {
   const handleRadioChange = (event) => {
-    setSelectedValue(event.target.value);
+    const selectedKey = event.target.value;
+    const selectedItem = data.find((item) => item.key === selectedKey);
+    onChange(selectedItem);
   };
 
   return (
@@ -20,13 +19,15 @@ function ExclusiveSelection({ headerText, data }) {
       </div>
       <div className="exclusive_selection_body">
         <FormControl component="fieldset">
-          <RadioGroup value={selectedValue} onChange={handleRadioChange}>
+          <RadioGroup value={selectedValue ? selectedValue.key : ''} onChange={handleRadioChange}>
             {data.map((item) => (
               <SelectionLabel
-                key={item.item}
-                value={item.item}
+                key={item.key}
+                value={item.key}
                 description={item.description}
                 selectionComponent={<Radio />}
+                isSelected={selectedValue ? selectedValue.key === item.key : false}
+                itemText={item.item} 
               />
             ))}
           </RadioGroup>
@@ -36,14 +37,11 @@ function ExclusiveSelection({ headerText, data }) {
   );
 }
 
-ExclusiveSelection.propTypes = {
-  headerText: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      item: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};
+
+
+
 
 export default ExclusiveSelection;
+
+
+
