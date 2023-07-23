@@ -7,7 +7,7 @@ import '../styles/global.css';
 import '../styles/csv-upload.css';
 import send from '../assets/send.svg';
 
-const CsvUpload = () => {
+const CsvUpload = ({ onUploadSuccess }) => {
 
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -89,6 +89,7 @@ const CsvUpload = () => {
         if (xhr.status === 200) {
           console.log('Arquivo enviado com sucesso!');
           toast.success('Arquivo enviado com sucesso!');
+          onUploadSuccess(fileId);
         } else {
           console.error('Falha ao enviar arquivo.');
           toast.error('Falha ao enviar arquivo.');
