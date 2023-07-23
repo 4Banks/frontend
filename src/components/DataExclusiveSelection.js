@@ -6,9 +6,9 @@ import '../styles/data-analysis-exclusive-selection.css'
 function DataExclusiveSelection({ selectedKeys, handleExclusiveSelectionChange }) {
 
   const sampling = [
-    { key:"over_sampling", item: "Over-sampling", description: "" },
-    { key:"under_sampling", item: "Under-sampling", description:  "" },
-    { key:"borderline_smote", item: "Borderline SMOTE", description:  "" },
+    { key:"random_over_sampling", item: "Over-sampling", description: "" },
+    { key:"random_under_sampling", item: "Under-sampling", description:  "" },
+    { key:"bsmote", item: "Borderline SMOTE", description:  "" },
     { key:"smote", item: "SMOTE", description:  "" },
     { key:"adasyn", item: "ADASYN", description: "" },
   ]
