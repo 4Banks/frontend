@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/data-analysis.css";
@@ -7,8 +7,16 @@ import DataExclusiveSelection from '../../components/DataExclusiveSelection';
 import DataMultiSelection from '../../components/DataMultiSelection';
 
 function DataAnalysis() {
+  const ADDRESS = process.env.REACT_APP_ADDRESS;
   const [fileId, setFileId] = useState(null);
+  const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
+
+  useEffect(() => {
+    console.log(fileId);
+    console.log(fileName);
+  }, [fileId, fileName]);
+
   const [selectedKeys, setSelectedKeys] = useState({
     samplingSelected: null,
     outlierTreatmentSelected: null,
@@ -35,17 +43,37 @@ function DataAnalysis() {
     }));
   };
 
-  const handleUploadSuccess = (fileId) => {
+  const handleUploadSuccess = (fileId, fileName) => {
     setUploadCompleted(true);
     setFileId(fileId);
+    setFileName(fileName); 
   };
 
-  const handleRequest = () => {
+  const handleRequest = async () => {
     console.log(selectedKeys);
     console.log(selectedItems);
     console.log(fileId);
+    console.log(fileName);
+    console.log(selectedKeys.samplingSelected.key)
+    try {
+      const response = await fetch(`${ADDRESS}/datasets/${fileId}/${fileName}/balance?method=${selectedKeys.samplingSelected.key}`);
+      if (response.ok) {
+        const data = await response.json();
+        const responseString = data.message;
+        const splitString = responseString.split('/');
+        const newFileId = splitString[splitString.length - 2];
+        const newFileName = splitString[splitString.length - 1].split('.').slice(0, -1).join('.');
+        setFileId(newFileId);
+        setFileName(newFileName);
+        console.log(fileId);
+        console.log(fileName);
+      } else {
+        console.error('Failed to fetch balance data.');
+      }
+    } catch (error) {
+      console.error('Error fetching balance data:', error);
+    }
   };
-
   return (
     <div>
       <div className="data_analysis">
