@@ -5,17 +5,26 @@ import "../../styles/data-analysis.css";
 import CsvUpload from '../../components/CsvUpload';
 import DataExclusiveSelection from '../../components/DataExclusiveSelection';
 import DataMultiSelection from '../../components/DataMultiSelection';
+import SamplingProgression from '../../components/SamplingProgression';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
   const [fileId, setFileId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [requestCompleted, setRequestCompleted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     console.log(fileId);
     console.log(fileName);
-  }, [fileId, fileName]);
+    console.log(loading)
+  }, [fileId, fileName,loading]);
+
+  useEffect(() => {
+    console.log(requestCompleted)
+  }, [requestCompleted]);
 
   const [selectedKeys, setSelectedKeys] = useState({
     samplingSelected: null,
@@ -46,15 +55,12 @@ function DataAnalysis() {
   const handleUploadSuccess = (fileId, fileName) => {
     setUploadCompleted(true);
     setFileId(fileId);
-    setFileName(fileName); 
+    setFileName(fileName);
   };
 
   const handleRequest = async () => {
-    console.log(selectedKeys);
-    console.log(selectedItems);
-    console.log(fileId);
-    console.log(fileName);
-    console.log(selectedKeys.samplingSelected.key)
+    setLoading(true)
+    setRequestCompleted(false);
     try {
       const response = await fetch(`${ADDRESS}/datasets/${fileId}/${fileName}/balance?method=${selectedKeys.samplingSelected.key}`);
       if (response.ok) {
@@ -65,8 +71,7 @@ function DataAnalysis() {
         const newFileName = splitString[splitString.length - 1].split('.').slice(0, -1).join('.');
         setFileId(newFileId);
         setFileName(newFileName);
-        console.log(fileId);
-        console.log(fileName);
+        setRequestCompleted(true);
       } else {
         console.error('Failed to fetch balance data.');
       }
@@ -74,6 +79,8 @@ function DataAnalysis() {
       console.error('Error fetching balance data:', error);
     }
   };
+  
+
   return (
     <div>
       <div className="data_analysis">
@@ -100,12 +107,20 @@ function DataAnalysis() {
             />
           </>
         )}
-
         {uploadCompleted ? (
-          <button className="data_analysis_submit_button" onClick={handleRequest}>Analisar</button>
+          <>
+            <button className="data_analysis_submit_button" onClick={handleRequest}>
+              Analisar
+            </button>
+            {loading && (
+              <SamplingProgression requestCompleted={requestCompleted} />
+            )}
+          </>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
         )}
+
+
       </div>
     </div>
   );
