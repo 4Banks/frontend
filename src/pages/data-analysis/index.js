@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/data-analysis.css";
@@ -30,7 +31,7 @@ function DataAnalysis() {
     samplingSelected: null,
     outlierTreatmentSelected: null,
     outlierRemovalSelected: null,
-  });
+  });  
 
   const [selectedItems, setSelectedItems] = useState({
     analysisDataSelected: [],
@@ -59,6 +60,18 @@ function DataAnalysis() {
   };
 
   const handleRequest = async () => {
+
+    const { samplingSelected, outlierTreatmentSelected, outlierRemovalSelected } = selectedKeys;
+      const toastRemoval = () => toast.error("Por favor, escolha um método de detecção de outliers ao selecionar a remoção de outliers.", { autoClose: 8000 });
+
+  
+    if (!outlierTreatmentSelected && outlierRemovalSelected) {
+      toastRemoval();
+      return;
+    }
+
+    
+    if(samplingSelected){
     setLoading(true)
     setRequestCompleted(false);
     try {
@@ -78,6 +91,9 @@ function DataAnalysis() {
     } catch (error) {
       console.error('Error fetching balance data:', error);
     }
+  }else{
+    console.log("Método de amostragem não selecionado")
+  }
   };
   
 
@@ -112,7 +128,7 @@ function DataAnalysis() {
             <button className="data_analysis_submit_button" onClick={handleRequest}>
               Analisar
             </button>
-            {loading && (
+            {selectedKeys.samplingSelected && loading && (
               <SamplingProgression requestCompleted={requestCompleted} />
             )}
           </>
