@@ -19,6 +19,9 @@ function DataAnalysis() {
   const [tracesMediaModaMediana, setTracesMediaModaMediana] = useState([]);
   const [standardDeviationReady, setStandardDeviationReady] = useState(false);
   const [traceStandardDeviation, setTraceStandardDeviation] = useState([]);
+  const [maxMinReady, setMaxMinReady] = useState(false);
+  const [tracesMaxMin, setTracesMaxMin] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
 
@@ -173,6 +176,30 @@ function DataAnalysis() {
           setStandardDeviationReady(true);
 
 
+          const maxRow = rows.find(row => row.startsWith('Valor máximo'));
+          const minRow = rows.find(row => row.startsWith('Valor mínimo'));
+
+          const maxValues = maxRow.split(',').slice(2).map(value => parseFloat(value));
+          const minValues = minRow.split(',').slice(2).map(value => parseFloat(value));
+
+          const tracesMaxMin = 
+            [{
+              x: vKeys,
+              y: maxValues,
+              type: 'scatter',
+              name: 'Valores máximos',
+            },
+            {
+              x: vKeys,
+              y: minValues,
+              type: 'scatter',
+              name: 'Valores mínimos',
+            }
+          ];
+          setTracesMaxMin(tracesMaxMin);
+          setMaxMinReady(true);
+
+
         } else {
           console.error('Failed to fetch CSV data.');
         }
@@ -286,6 +313,15 @@ function DataAnalysis() {
               />
             }
 
+            {selectedItems.analysisDataSelected.includes("max_min") && maxMinReady && 
+            <LineChart
+                traces={tracesMaxMin}
+                title="Valor máximo e mínimo das features"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`O valor máximo é o maior número encontrado no conjunto de dados, enquanto o valor mínimo é o menor. Essas medidas indicam a amplitude dos valores e a variabilidade dos dados. Um amplo intervalo sugere maior dispersão, e um intervalo estreito indica maior concentração em torno da média.`}
+              />
+            }
 
           </>
         ) : (

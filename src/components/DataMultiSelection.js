@@ -16,7 +16,7 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
         {  key:"assimetria", item: "Assimetria", description: "" },
         {  key:"curtose", item: "Curtose", description: "" },
         {  key:"intervalo_valores", item: "Intervalo de valores", description: "" },
-        {  key:"max_min", item: "Máximos e mínimos", description: "" },
+        {  key:"max_min", item: "Máximos e mínimos", description: "O valor máximo é o maior número encontrado no conjunto de dados, enquanto o valor mínimo é o menor. Essas medidas indicam a amplitude dos valores e a variabilidade dos dados. Um amplo intervalo sugere maior dispersão, e um intervalo estreito indica maior concentração em torno da média." },
       ];
     
       const machineLearning = [
