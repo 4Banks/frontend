@@ -28,6 +28,9 @@ function DataAnalysis() {
   const [skewnessReady, setSkewnessReady] = useState(false);
   const [tracesSkewness, setTracesSkewness] = useState([]);
 
+  const [kurtosisReady, setKurtosisReady] = useState(false);
+  const [tracesKurtosis, setTracesKurtosis] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
 
@@ -214,11 +217,26 @@ function DataAnalysis() {
             x: vKeys,
             y: skewnessValues,
             type: 'scatter',
-            name: 'Valores máximos',
+            name: 'Assimetria',
           }
         ];
         setTracesSkewness(tracesSkewness);
         setSkewnessReady(true);
+
+        const kurtosisRow = rows.find(row => row.startsWith('Curtose'));
+
+        const kurtosisValues = kurtosisRow.split(',').slice(2).map(value => parseFloat(value));
+
+        const tracesKurtosis = 
+        [{
+          x: vKeys,
+          y: kurtosisValues,
+          type: 'scatter',
+          name: 'Curtose',
+        }
+      ];
+      setTracesKurtosis(tracesKurtosis);
+      setKurtosisReady(true);
 
         } else {
           console.error('Failed to fetch CSV data.');
@@ -346,12 +364,25 @@ function DataAnalysis() {
             {selectedItems.analysisDataSelected.includes("assimetria") && skewnessReady && 
             <LineChart
                 traces={tracesSkewness}
-                title="Assimetria das features"
+                title="Assimetria"
                 xTitle="Features"
                 yTitle="Valores"
                 description={`A assimetria das features é uma medida estatística que indica a tendência de distribuição dos dados em relação à média. Se a distribuição é simétrica, a assimetria é próxima de zero; se é assimétrica, pode ser positiva ou negativa. Ela revela a forma e inclinação da distribuição dos dados, fornecendo insights valiosos para análise e interpretação dos mesmos.`}
               />
             }
+
+            {selectedItems.analysisDataSelected.includes("curtose") && kurtosisReady && 
+            <LineChart
+                traces={tracesKurtosis}
+                title="Curtose"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`Curtose é uma medida estatística que indica o achatamento e a forma da distribuição dos dados em relação à média. Valores maiores indicam maior concentração dos dados em torno da média e caudas mais pesadas, enquanto valores menores sugerem maior dispersão dos dados e caudas mais leves. A curtose é importante para entender a variabilidade e a presença de outliers em um conjunto de dados, auxiliando na análise dos padrões estatísticos.`}
+              />
+            }
+
+
+
 
           </>
         ) : (
