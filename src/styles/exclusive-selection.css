@@ -1,8 +1,8 @@
 .exclusive_selection_container {
     border-radius: 25px;
     border: solid;
-    width: 350px;
-    height: 500px;
+    width: 375px;
+    height: 600px;
     border-color: var(--secondaryColor);
     margin-bottom: 30px;
 }
