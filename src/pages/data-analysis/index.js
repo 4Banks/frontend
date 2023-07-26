@@ -8,6 +8,7 @@ import DataExclusiveSelection from '../../components/DataExclusiveSelection';
 import DataMultiSelection from '../../components/DataMultiSelection';
 import SamplingProgression from '../../components/SamplingProgression';
 import LineChart from '../../components/LineChart';
+import SuperficialAnalysisProgression from '../../components/SuperficialAnalysisProgression';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -397,10 +398,14 @@ function DataAnalysis() {
             }}>
             Analisar
             </button>
+
             {selectedKeys.samplingSelected && loading && (
               <SamplingProgression requestCompleted={requestCompleted} />
             )}
 
+            {selectedItems.analysisDataSelected.length > 0 && loading && (
+              <SuperficialAnalysisProgression requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} />
+            )}
 
             {selectedItems.analysisDataSelected.includes("media_moda_mediana") && mediaModaMedianaReady && 
             <LineChart

@@ -1,0 +1,31 @@
+.superficial_analysis_progression {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.superficial_analysis_progression_container {
+    width: 80%;
+    max-width: 1440px;
+}
+
+.superficial_analysis_progression_title {
+    font-size: 1.5rem;
+    color: var(--secondaryColor);
+    margin-bottom: 10px;
+}
+
+.superficial_analysis_progression_bar {
+    width: 100%;
+}
+
+.superficial_analysis_progression_bar div {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.superficial_analysis_progression_bar div[style*="100"] {
+    opacity: 0;
+}
