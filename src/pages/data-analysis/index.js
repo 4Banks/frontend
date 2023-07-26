@@ -38,6 +38,9 @@ function DataAnalysis() {
   const [rangeValuesReady, setRangeValuesReady] = useState(false);
   const [tracesRangeValues, setTracesRangeValues] = useState([]);
 
+  const [basicAnalysisReady, setBasicAnalysisReady] = useState(false);
+  const [tracesBasicAnalysis, setTracesBasicAnalysis] = useState([]);
+
 
   const [loading, setLoading] = useState(false);
 
@@ -263,9 +266,7 @@ function DataAnalysis() {
     setIqrReady(true);
 
       const rangeValuesRow = rows.find(row => row.startsWith('Intervalo de valores'));
-
       const rangeValuesValues = rangeValuesRow.split(',').slice(2).map(value => parseFloat(value));
-
       const tracesRangeValues = 
       [{
         x: vKeys,
@@ -276,7 +277,39 @@ function DataAnalysis() {
     ];
     setTracesRangeValues(tracesRangeValues);
     setRangeValuesReady(true);
+    
+    const emptyFieldsRow = rows.find(row => row.startsWith('Campos vazios'));
+    const emptyFieldsPercentageRow = rows.find(row => row.startsWith('Campos vazios (%)'));
+    const nullFieldsRow = rows.find(row => row.startsWith('Campos com valor zero'));
 
+
+    const emptyFieldsValues = emptyFieldsRow.split(',').slice(2).map(value => parseFloat(value));
+    const emptyFieldsPercentageValues = emptyFieldsPercentageRow.split(',').slice(2).map(value => parseFloat(value));
+    const nullFieldsValues = nullFieldsRow.split(',').slice(2).map(value => parseFloat(value));
+
+    const tracesBasicAnalysis = 
+    [{
+      x: vKeys,
+      y: emptyFieldsValues,
+      type: 'scatter',
+      name: 'Campos vazios',
+    },
+    {
+      x: vKeys,
+      y: emptyFieldsPercentageValues,
+      type: 'scatter',
+      name: 'Porcentagem de Campos vazios',
+    },
+    {
+      x: vKeys,
+      y: nullFieldsValues,
+      type: 'scatter',
+      name: 'Campos com valor zero',
+    }
+
+  ];
+  setTracesBasicAnalysis(tracesBasicAnalysis);
+  setBasicAnalysisReady(true);
 
         } else {
           console.error('Failed to fetch CSV data.');
@@ -441,7 +474,15 @@ function DataAnalysis() {
               />
             }
 
-
+            {selectedItems.analysisDataSelected.includes("intervalo_valores") && basicAnalysisReady && 
+            <LineChart
+                traces={tracesBasicAnalysis}
+                title="Análise básica"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`Número e porcentagem de dados faltantes e número de campos com o valor zero.`}
+              />
+            }
 
           </>
         ) : (
