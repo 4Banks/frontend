@@ -15,12 +15,18 @@ function DataAnalysis() {
   const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
   const [requestCompleted, setRequestCompleted] = useState(false);
+
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
   const [tracesMediaModaMediana, setTracesMediaModaMediana] = useState([]);
+
   const [standardDeviationReady, setStandardDeviationReady] = useState(false);
   const [traceStandardDeviation, setTraceStandardDeviation] = useState([]);
+
   const [maxMinReady, setMaxMinReady] = useState(false);
   const [tracesMaxMin, setTracesMaxMin] = useState([]);
+
+  const [skewnessReady, setSkewnessReady] = useState(false);
+  const [tracesSkewness, setTracesSkewness] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -198,7 +204,21 @@ function DataAnalysis() {
           ];
           setTracesMaxMin(tracesMaxMin);
           setMaxMinReady(true);
+          
+          const skewnessRow = rows.find(row => row.startsWith('Assimetria'));
 
+          const skewnessValues = skewnessRow.split(',').slice(2).map(value => parseFloat(value));
+
+          const tracesSkewness = 
+          [{
+            x: vKeys,
+            y: skewnessValues,
+            type: 'scatter',
+            name: 'Valores máximos',
+          }
+        ];
+        setTracesSkewness(tracesSkewness);
+        setSkewnessReady(true);
 
         } else {
           console.error('Failed to fetch CSV data.');
@@ -320,6 +340,16 @@ function DataAnalysis() {
                 xTitle="Features"
                 yTitle="Valores"
                 description={`O valor máximo é o maior número encontrado no conjunto de dados, enquanto o valor mínimo é o menor. Essas medidas indicam a amplitude dos valores e a variabilidade dos dados. Um amplo intervalo sugere maior dispersão, e um intervalo estreito indica maior concentração em torno da média.`}
+              />
+            }
+
+            {selectedItems.analysisDataSelected.includes("assimetria") && skewnessReady && 
+            <LineChart
+                traces={tracesSkewness}
+                title="Assimetria das features"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`A assimetria das features é uma medida estatística que indica a tendência de distribuição dos dados em relação à média. Se a distribuição é simétrica, a assimetria é próxima de zero; se é assimétrica, pode ser positiva ou negativa. Ela revela a forma e inclinação da distribuição dos dados, fornecendo insights valiosos para análise e interpretação dos mesmos.`}
               />
             }
 
