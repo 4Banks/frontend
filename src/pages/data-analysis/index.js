@@ -31,6 +31,11 @@ function DataAnalysis() {
   const [kurtosisReady, setKurtosisReady] = useState(false);
   const [tracesKurtosis, setTracesKurtosis] = useState([]);
 
+
+  const [iqrReady, setIqrReady] = useState(false);
+  const [tracesIqr, setTracesIqr] = useState([]);
+
+
   const [loading, setLoading] = useState(false);
 
 
@@ -238,6 +243,22 @@ function DataAnalysis() {
       setTracesKurtosis(tracesKurtosis);
       setKurtosisReady(true);
 
+
+      const iqrRow = rows.find(row => row.startsWith('IQR'));
+
+      const iqrValues = iqrRow.split(',').slice(2).map(value => parseFloat(value));
+
+      const tracesIqr = 
+      [{
+        x: vKeys,
+        y: iqrValues,
+        type: 'scatter',
+        name: 'Amplitude interquartil (IQR)',
+      }
+    ];
+    setTracesIqr(tracesIqr);
+    setIqrReady(true);
+
         } else {
           console.error('Failed to fetch CSV data.');
         }
@@ -378,6 +399,16 @@ function DataAnalysis() {
                 xTitle="Features"
                 yTitle="Valores"
                 description={`Curtose é uma medida estatística que indica o achatamento e a forma da distribuição dos dados em relação à média. Valores maiores indicam maior concentração dos dados em torno da média e caudas mais pesadas, enquanto valores menores sugerem maior dispersão dos dados e caudas mais leves. A curtose é importante para entender a variabilidade e a presença de outliers em um conjunto de dados, auxiliando na análise dos padrões estatísticos.`}
+              />
+            }
+
+            {selectedItems.analysisDataSelected.includes("iqr") && iqrReady && 
+            <LineChart
+                traces={tracesIqr}
+                title="Amplitude interquartil (IQR)"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`Medida estatística que representa a diferença entre o terceiro quartil (75º percentil) e o primeiro quartil (25º percentil) de um conjunto de dados ordenado. Ela descreve a variação central dos dados, ignorando valores extremos, sendo uma medida mais robusta em relação à presença de outliers.`}
               />
             }
 
