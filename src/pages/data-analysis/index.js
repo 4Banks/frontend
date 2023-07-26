@@ -17,6 +17,8 @@ function DataAnalysis() {
   const [requestCompleted, setRequestCompleted] = useState(false);
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
   const [tracesMediaModaMediana, setTracesMediaModaMediana] = useState([]);
+  const [standardDeviationReady, setStandardDeviationReady] = useState(false);
+  const [traceStandardDeviation, setTraceStandardDeviation] = useState([]);
   const [loading, setLoading] = useState(false);
 
 
@@ -156,6 +158,21 @@ function DataAnalysis() {
           ];
           setTracesMediaModaMediana(tracesMediaModaMediana);
           setMediaModaMedianaReady(true);
+
+          const standardDeviationRow = rows.find(row => row.startsWith('Desvio padrão'));
+          const standardDeviationValues = standardDeviationRow.split(',').slice(2).map(value => parseFloat(value));
+          console.log(standardDeviationValues);
+          const traceStandardDeviation = 
+            [{
+              x: vKeys,
+              y: standardDeviationValues,
+              type: 'scatter',
+              name: 'Desvio padrão',
+            }];
+          setTraceStandardDeviation(traceStandardDeviation);
+          setStandardDeviationReady(true);
+
+
         } else {
           console.error('Failed to fetch CSV data.');
         }
@@ -258,6 +275,18 @@ function DataAnalysis() {
                 Moda: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma.`}
               />
             }
+
+            {selectedItems.analysisDataSelected.includes("desvio_padrao") && standardDeviationReady && 
+            <LineChart
+                traces={traceStandardDeviation}
+                title="Desvio padrão das features"
+                xTitle="Features"
+                yTitle="Valores"
+                description={` Medida estatística que indica a dispersão dos valores em relação à média, expressando o quanto os dados se afastam do valor médio do conjunto, fornecendo uma noção da variabilidade dos dados. Quanto maior o desvio padrão, maior a dispersão dos dados em relação à média.`}
+              />
+            }
+
+
           </>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
