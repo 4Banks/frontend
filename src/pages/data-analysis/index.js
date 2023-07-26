@@ -44,6 +44,7 @@ function DataAnalysis() {
 
 
   const [loading, setLoading] = useState(false);
+  const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
 
 
 
@@ -143,6 +144,7 @@ function DataAnalysis() {
   
 
   const handleSuperficialAnalysis = async (updatedFileName) => {
+    setLoadingSuperficialAnalysis(true);
     try {
       const response = await fetch(`${ADDRESS}/superficial_analysis/${fileId}/${updatedFileName}`);
       if (response.ok) {
@@ -311,7 +313,7 @@ function DataAnalysis() {
   ];
   setTracesBasicAnalysis(tracesBasicAnalysis);
   setBasicAnalysisReady(true);
-
+  setLoadingSuperficialAnalysis(false);
         } else {
           console.error('Failed to fetch CSV data.');
         }
@@ -403,7 +405,7 @@ function DataAnalysis() {
               <SamplingProgression requestCompleted={requestCompleted} />
             )}
 
-            {selectedItems.analysisDataSelected.length > 0 && loading && (
+            {selectedItems.analysisDataSelected.length > 0 && loadingSuperficialAnalysis && (
               <SuperficialAnalysisProgression requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} />
             )}
 
