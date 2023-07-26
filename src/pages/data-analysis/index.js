@@ -35,6 +35,9 @@ function DataAnalysis() {
   const [iqrReady, setIqrReady] = useState(false);
   const [tracesIqr, setTracesIqr] = useState([]);
 
+  const [rangeValuesReady, setRangeValuesReady] = useState(false);
+  const [tracesRangeValues, setTracesRangeValues] = useState([]);
+
 
   const [loading, setLoading] = useState(false);
 
@@ -259,6 +262,22 @@ function DataAnalysis() {
     setTracesIqr(tracesIqr);
     setIqrReady(true);
 
+      const rangeValuesRow = rows.find(row => row.startsWith('Intervalo de valores'));
+
+      const rangeValuesValues = rangeValuesRow.split(',').slice(2).map(value => parseFloat(value));
+
+      const tracesRangeValues = 
+      [{
+        x: vKeys,
+        y: rangeValuesValues,
+        type: 'scatter',
+        name: 'Amplitude interquartil (IQR)',
+      }
+    ];
+    setTracesRangeValues(tracesRangeValues);
+    setRangeValuesReady(true);
+
+
         } else {
           console.error('Failed to fetch CSV data.');
         }
@@ -412,6 +431,15 @@ function DataAnalysis() {
               />
             }
 
+            {selectedItems.analysisDataSelected.includes("intervalo_valores") && rangeValuesReady && 
+            <LineChart
+                traces={tracesRangeValues}
+                title="Intervalo de valores"
+                xTitle="Features"
+                yTitle="Valores"
+                description={`O intervalo de valores é a diferença entre o maior e o menor valor em um conjunto de dados. Essa medida simples de dispersão oferece uma visão básica da variação dos dados, mas pode ser afetada por valores extremos.`}
+              />
+            }
 
 
 
