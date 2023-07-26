@@ -9,10 +9,14 @@ import machine_learning from '../assets/machine_learning.svg'
 function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
 
     const analysisData = [
-        {  key:"1",  item: "Média, Mediana e Moda", description: "Média: Valor obtido pela soma de todos os elementos de um conjunto dividido pelo número de elementos presentes. \nMediana: Valor central de um conjunto ordenado, separando-o em duas partes iguais. \nModa: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma." },
-        {  key:"2", item: "Desvio Padrão", description: "Desvio Padrão: Medida estatística que indica a dispersão dos valores em relação à média, expressando o quanto os dados se afastam do valor médio do conjunto, fornecendo uma noção da variabilidade dos dados. Quanto maior o desvio padrão, maior a dispersão dos dados em relação à média." },
-        {  key:"3", item: "Amplitude interquartil", description: "Amplitude interquartil: Medida estatística que representa a diferença entre o terceiro quartil (75º percentil) e o primeiro quartil (25º percentil) de um conjunto de dados ordenado. Ela descreve a variação central dos dados, ignorando valores extremos, sendo uma medida mais robusta em relação à presença de outliers." },
-        {  key:"4", item: "Análise básica", description: "Número e porcentagem de dados faltantes, zeros, valor máximo e mínimo de cada feature." },
+        {  key:"media_moda_mediana",  item: "Média, Mediana e Moda", description: "Média: Valor obtido pela soma de todos os elementos de um conjunto dividido pelo número de elementos presentes. \nMediana: Valor central de um conjunto ordenado, separando-o em duas partes iguais. \nModa: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma." },
+        {  key:"desvio_padrao", item: "Desvio Padrão", description: "Desvio Padrão: Medida estatística que indica a dispersão dos valores em relação à média, expressando o quanto os dados se afastam do valor médio do conjunto, fornecendo uma noção da variabilidade dos dados. Quanto maior o desvio padrão, maior a dispersão dos dados em relação à média." },
+        {  key:"iqr", item: "Amplitude interquartil (IQR)", description: "Amplitude interquartil: Medida estatística que representa a diferença entre o terceiro quartil (75º percentil) e o primeiro quartil (25º percentil) de um conjunto de dados ordenado. Ela descreve a variação central dos dados, ignorando valores extremos, sendo uma medida mais robusta em relação à presença de outliers." },
+        {  key:"analise_basica", item: "Análise básica", description: "Número e porcentagem de dados faltantes e número de campos com o valor zero." },
+        {  key:"assimetria", item: "Assimetria", description: "A assimetria das features é uma medida estatística que indica a tendência de distribuição dos dados em relação à média. Se a distribuição é simétrica, a assimetria é próxima de zero; se é assimétrica, pode ser positiva ou negativa. Ela revela a forma e inclinação da distribuição dos dados, fornecendo insights valiosos para análise e interpretação dos mesmos." },
+        {  key:"curtose", item: "Curtose", description: "Curtose é uma medida estatística que indica o achatamento e a forma da distribuição dos dados em relação à média. Valores maiores indicam maior concentração dos dados em torno da média e caudas mais pesadas, enquanto valores menores sugerem maior dispersão dos dados e caudas mais leves. A curtose é importante para entender a variabilidade e a presença de outliers em um conjunto de dados, auxiliando na análise dos padrões estatísticos." },
+        {  key:"intervalo_valores", item: "Intervalo de valores", description: "O intervalo de valores é a diferença entre o maior e o menor valor em um conjunto de dados. Essa medida simples de dispersão oferece uma visão básica da variação dos dados, mas pode ser afetada por valores extremos." },
+        {  key:"max_min", item: "Máximos e mínimos", description: "O valor máximo é o maior número encontrado no conjunto de dados, enquanto o valor mínimo é o menor. Essas medidas indicam a amplitude dos valores e a variabilidade dos dados. Um amplo intervalo sugere maior dispersão, e um intervalo estreito indica maior concentração em torno da média." },
       ];
     
       const machineLearning = [
@@ -50,7 +54,7 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
           <MultiSelection
             headerText="Machine Learning"
             imageSrc={machine_learning}
-            data={machineLearning} // Make sure machineLearning is defined and contains valid data
+            data={machineLearning}
             selectedItems={selectedItems.machineLearningSelected}
             onChange={(selectedItems) =>
               handleMultiSelectionChange('machineLearningSelected', selectedItems)
@@ -59,7 +63,7 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
           <MultiSelection
             headerText="Detecção de anomalias"
             imageSrc={anomaly_detection}
-            data={anomalyDetection} // Make sure anomalyDetection is defined and contains valid data
+            data={anomalyDetection}
             selectedItems={selectedItems.anomalyDetectionSelected}
             onChange={(selectedItems) =>
               handleMultiSelectionChange('anomalyDetectionSelected', selectedItems)
