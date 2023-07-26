@@ -9,10 +9,14 @@ import machine_learning from '../assets/machine_learning.svg'
 function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
 
     const analysisData = [
-        {  key:"1",  item: "Média, Mediana e Moda", description: "Média: Valor obtido pela soma de todos os elementos de um conjunto dividido pelo número de elementos presentes. \nMediana: Valor central de um conjunto ordenado, separando-o em duas partes iguais. \nModa: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma." },
-        {  key:"2", item: "Desvio Padrão", description: "Desvio Padrão: Medida estatística que indica a dispersão dos valores em relação à média, expressando o quanto os dados se afastam do valor médio do conjunto, fornecendo uma noção da variabilidade dos dados. Quanto maior o desvio padrão, maior a dispersão dos dados em relação à média." },
-        {  key:"3", item: "Amplitude interquartil", description: "Amplitude interquartil: Medida estatística que representa a diferença entre o terceiro quartil (75º percentil) e o primeiro quartil (25º percentil) de um conjunto de dados ordenado. Ela descreve a variação central dos dados, ignorando valores extremos, sendo uma medida mais robusta em relação à presença de outliers." },
-        {  key:"4", item: "Análise básica", description: "Número e porcentagem de dados faltantes, zeros, valor máximo e mínimo de cada feature." },
+        {  key:"media_moda_mediana",  item: "Média, Mediana e Moda", description: "Média: Valor obtido pela soma de todos os elementos de um conjunto dividido pelo número de elementos presentes. \nMediana: Valor central de um conjunto ordenado, separando-o em duas partes iguais. \nModa: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma." },
+        {  key:"desvio_padrao", item: "Desvio Padrão", description: "Desvio Padrão: Medida estatística que indica a dispersão dos valores em relação à média, expressando o quanto os dados se afastam do valor médio do conjunto, fornecendo uma noção da variabilidade dos dados. Quanto maior o desvio padrão, maior a dispersão dos dados em relação à média." },
+        {  key:"iqr", item: "Amplitude interquartil (IQR)", description: "Amplitude interquartil: Medida estatística que representa a diferença entre o terceiro quartil (75º percentil) e o primeiro quartil (25º percentil) de um conjunto de dados ordenado. Ela descreve a variação central dos dados, ignorando valores extremos, sendo uma medida mais robusta em relação à presença de outliers." },
+        {  key:"analise_basica", item: "Análise básica", description: "Número e porcentagem de dados faltantes e número de campos com o valor zero." },
+        {  key:"assimetria", item: "Assimetria", description: "" },
+        {  key:"curtose", item: "Curtose", description: "" },
+        {  key:"intervalo_valores", item: "Intervalo de valores", description: "" },
+        {  key:"max_min", item: "Máximos e mínimos", description: "" },
       ];
     
       const machineLearning = [
@@ -50,7 +54,7 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
           <MultiSelection
             headerText="Machine Learning"
             imageSrc={machine_learning}
-            data={machineLearning} // Make sure machineLearning is defined and contains valid data
+            data={machineLearning}
             selectedItems={selectedItems.machineLearningSelected}
             onChange={(selectedItems) =>
               handleMultiSelectionChange('machineLearningSelected', selectedItems)
@@ -59,7 +63,7 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
           <MultiSelection
             headerText="Detecção de anomalias"
             imageSrc={anomaly_detection}
-            data={anomalyDetection} // Make sure anomalyDetection is defined and contains valid data
+            data={anomalyDetection}
             selectedItems={selectedItems.anomalyDetectionSelected}
             onChange={(selectedItems) =>
               handleMultiSelectionChange('anomalyDetectionSelected', selectedItems)
