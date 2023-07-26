@@ -4,8 +4,8 @@ import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/data-analysis.css";
 import CsvUpload from '../../components/CsvUpload';
-import DataExclusiveSelection from '../../components/DataExclusiveSelection';
-import DataMultiSelection from '../../components/DataMultiSelection';
+import DataProcessing from '../../components/DataProcessing';
+import AnalysisSelection from '../../components/AnalysisSelection';
 import SamplingProgression from '../../components/SamplingProgression';
 import LineChart from '../../components/LineChart';
 import SuperficialAnalysisProgression from '../../components/SuperficialAnalysisProgression';
@@ -46,6 +46,8 @@ function DataAnalysis() {
   const [loading, setLoading] = useState(false);
   const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
 
+  // const [attributes, setAttributes] = useState([]);
+
 
 
   useEffect(() => {
@@ -60,11 +62,12 @@ function DataAnalysis() {
 
   const [selectedKeys, setSelectedKeys] = useState({
     samplingSelected: null,
-    outlierTreatmentSelected: null,
-    outlierRemovalSelected: null,
+    outlierDetectionSelected: null,
+    emptySetsTreatment: null,
   });  
 
   const [selectedItems, setSelectedItems] = useState({
+    outlierRemovalSelected: [],
     analysisDataSelected: [],
     machineLearningSelected: [],
     anomalyDetectionSelected: [],
@@ -141,6 +144,8 @@ function DataAnalysis() {
       
     }
   };
+
+  // const get
   
 
   const handleSuperficialAnalysis = async (updatedFileName) => {
@@ -331,10 +336,10 @@ function DataAnalysis() {
   const handleRequest = async () => {
     console.log(selectedKeys);
     console.log(selectedItems);
-    const { samplingSelected, outlierTreatmentSelected, outlierRemovalSelected } = selectedKeys;
+    const { samplingSelected, outlierDetectionSelected, outlierRemovalSelected } = selectedKeys;
     const toastRemoval = () => toast.error("Por favor, escolha um método de detecção de outliers ao selecionar a remoção de outliers.", { autoClose: 8000 });
   
-    if (!outlierTreatmentSelected && outlierRemovalSelected) {
+    if (!outlierDetectionSelected && outlierRemovalSelected) {
       toastRemoval();
       return;
     }
@@ -383,11 +388,14 @@ function DataAnalysis() {
 
         {uploadCompleted && (
           <>
-            <DataExclusiveSelection
+            <DataProcessing
               selectedKeys={selectedKeys}
+              selectedItems={selectedItems}
               handleExclusiveSelectionChange={handleExclusiveSelectionChange}
+              handleMultiSelectionChange={handleMultiSelectionChange}
+
             />
-            <DataMultiSelection
+            <AnalysisSelection
               selectedItems={selectedItems}
               handleMultiSelectionChange={handleMultiSelectionChange}
             />

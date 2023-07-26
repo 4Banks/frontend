@@ -45,4 +45,7 @@
         text-align: center;
         font-size: 2rem;
     }
+    .exclusive_selection_container {
+        margin: 10px
+    }
 }

@@ -1,8 +1,8 @@
 .exclusive_selection_container {
     border-radius: 25px;
     border: solid;
-    width: 375px;
-    height: 600px;
+    width: 350px;
+    height: 500px;
     border-color: var(--secondaryColor);
     margin-bottom: 30px;
 }
@@ -12,6 +12,7 @@
     font-weight: bold;
     color: var(--secondaryColor);
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .exclusive_selection_header {
