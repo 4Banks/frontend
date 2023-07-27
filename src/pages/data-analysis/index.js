@@ -9,7 +9,6 @@ import LineChart from '../../components/LineChart';
 import ProgressionBar from '../../components/ProgressionBar';
 import MachineLearningPlot from '../../components/MachineLearningPlot';
 import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
-import { ConstructionOutlined } from '@mui/icons-material';
 import FeatureImportancePlot from '../../components/FeatureImportancePlot';
 
 function DataAnalysis() {
@@ -223,6 +222,7 @@ function DataAnalysis() {
 
   async function getContentFromURL(endpoint, fileId) {
     const baseURL = `${ADDRESS}/${endpoint}/${fileId}`;
+    console.log(baseURL)
     try {
       const response = await fetch(baseURL);
       
@@ -263,6 +263,29 @@ function DataAnalysis() {
     }
   };
   
+  const handleLogisticRegression = async (fileId, fileName) => {
+    try {
+      const status_logistic_regression = await checkStatusForDataWithRetry(fileId, "logistic_regression");
+      if (status_logistic_regression === "finished") {
+        const data_xgboost = await getData(fileName, 'logistic_regression', 15, 10, "json");
+        if (data_xgboost) {
+          console.log(data_xgboost);
+          setDataLogisticRegression(data_xgboost);
+          setLogisticRegressionStatus(status_logistic_regression);
+          setLoadingLogisticRegression(false);
+        }
+      } else if (status_logistic_regression === "running") {
+        setTimeout(() => {
+          handleLogisticRegression(fileId, fileName);
+        }, 10000);
+      } else {
+        setLogisticRegressionStatus(status_logistic_regression);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingLogisticRegression(false);
+    }
+  };
 
   function checkStatus(arrayFinished, arrayRunning, arrayFailed, modelName) {
     if (arrayRunning.some(item => item.model_name === modelName)) {
@@ -276,7 +299,7 @@ function DataAnalysis() {
       return "finished";
     } else {
       console.log("not found")
-      return "Model not found";
+      return "not found";
     }
   }
 
@@ -285,41 +308,27 @@ function DataAnalysis() {
   }
   
 
-async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
-  try {
-    let runningData = await getContentFromURL("running_training_tasks", fileId);
-    let finishedData = await getContentFromURL("finished_training_tasks", fileId);
-    let failedData = await getContentFromURL("failed_training_tasks", fileId);
-
-    if (!Array.isArray(runningData) || !Array.isArray(finishedData) || !Array.isArray(failedData)) {
-      console.error("Data is not an array. Retrying...");
-      await wait(5000);
-      return checkStatusForDataWithRetry(fileId, modelName, retryCount - 1);
+    async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
+      try {
+        let runningData = await getContentFromURL("running_training_tasks", fileId);
+        let finishedData = await getContentFromURL("finished_training_tasks", fileId);
+        let failedData = await getContentFromURL("failed_training_tasks", fileId);
+    
+        const status = checkStatus(finishedData, runningData, failedData, modelName);
+    
+        if (status === "not found" && retryCount > 0) {
+          console.error("Model not found. Retrying...");
+          await wait(10000);
+          return checkStatusForDataWithRetry(fileId, modelName, retryCount - 1);
+        }
+    
+        return status;
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
-
-    const status = checkStatus(finishedData, runningData, failedData, modelName);
-    return status;
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-  // const handleLogisticRegression = async (fileName) => {
-  //   setLoadingLogisticRegression(true);
-  //   try {
-  //     const data_logistic_regression= await getData(fileName, 'logistic_regression',15,10,"json");
-  //     if (data_logistic_regression) {
-  //       console.log(data_logistic_regression);
-  //       setDataLogisticRegression(data_logistic_regression);
-  //       console.log(data_logistic_regression.performance_metrics);
-  //       console.log(data_logistic_regression.confusion_matrix);
-  //       setLogisticRegressionReady(true);
-  //       setLoadingLogisticRegression(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
+  
+  
 
   const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
@@ -509,7 +518,8 @@ async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
           handleSuperficialAnalysis(fileName);
         }
         if(attributes.ml_logistic_regression){
-          // handleLogisticRegression(fileName);
+          setLoadingLogisticRegression(true);
+          handleLogisticRegression(fileId, fileName);
         }
         if(attributes.ml_xgboost){
           handleXGBoost(fileId,fileName);
@@ -652,15 +662,15 @@ async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
               />
             }
 
-            {/* {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && loadingLogisticRegression && (
-              <ProgressionBar requestCompleted={logisticRegressionReady} title={"Carregando Regressão Logistica"} />
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") &&  loadingLogisticRegression && (
+              <ProgressionBar requestCompleted={logisticRegressionStatus} title={"Carregando Regressão Logistica"} />
             )}
-            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionReady && 
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionStatus === "finished" && 
             <div>
             <MachineLearningPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
-              title="Regressão Logística"
+              title="Regressão Logística Métricas"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -670,29 +680,37 @@ async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
             <ConfusionMatrixPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
-              title="Matriz de confusão"
+              title="Regressão Logística Matrix de Confusão"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
               
                                           É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}  
             />
+              <FeatureImportancePlot 
+              featureImportance={dataLogisticRegression.feature_importance}
+              title="Regressão Logística Feature Importance"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
             </div>
+
             
-            } */}
+            }
 
             {selectedItems.machineLearningSelected.includes("ml_xgboost") && loadingXGBoost && (
               <ProgressionBar requestCompleted={XGBoostStatus} title={"Carregando XGBoost"} />
             )}
-
-
 
             {selectedItems.machineLearningSelected.includes("ml_xgboost") && XGBoostStatus === "finished" && 
             <div>
             <MachineLearningPlot
               performanceMetrics={dataXGBoost.performance_metrics}
               confusionMatrix={dataXGBoost.confusion_matrix}
-              title="XGBoost"
+              title="XGBoost Métricas"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
