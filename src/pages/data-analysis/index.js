@@ -53,6 +53,10 @@ function DataAnalysis() {
   const [XGBoostStatus, setXGBoostStatus] = useState("running");
   const [dataXGBoost, setDataXGBoost] = useState([]);
 
+  const [loadingLightGBM, setLoadingLightGBM] = useState(false);
+  const [LightGBMStatus, setLightGBMStatus] = useState("running");
+  const [dataLightGBM, setDataLightGBM] = useState([]);
+
 
   useEffect(() => {
     console.log(fileId);
@@ -262,6 +266,32 @@ function DataAnalysis() {
       setLoadingXGBoost(false);
     }
   };
+
+  const handleLightGBM = async (fileId, fileName) => {
+    setLoadingLightGBM(true);
+    try {
+      const status_lightgbm = await checkStatusForDataWithRetry(fileId, "lightgbm");
+      if (status_lightgbm === "finished") {
+        const data_lightgbm = await getData(fileName, 'lightgbm', 15, 10, "json");
+        if (data_lightgbm) {
+          console.log(data_lightgbm);
+          setDataLightGBM(data_lightgbm);
+          setLightGBMStatus(status_lightgbm);
+          setLoadingLightGBM(false);
+        }
+      } else if (status_lightgbm === "running") {
+        setTimeout(() => {
+          handleLightGBM(fileId, fileName);
+        }, 10000);
+      } else {
+        setLightGBMStatus(status_lightgbm);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingLightGBM(false);
+    }
+  };
+
   
   const handleLogisticRegression = async (fileId, fileName) => {
     try {
@@ -514,15 +544,16 @@ function DataAnalysis() {
       if(fetchedData) {
         console.log(fetchedData);
         if(attributes.superficial_analysis){
-          setLoadingSuperficialAnalysis(true);
           handleSuperficialAnalysis(fileName);
         }
         if(attributes.ml_logistic_regression){
-          setLoadingLogisticRegression(true);
           handleLogisticRegression(fileId, fileName);
         }
         if(attributes.ml_xgboost){
           handleXGBoost(fileId,fileName);
+        }
+        if(attributes.ml_lightgbm){
+          handleLightGBM(fileId,fileName);
         }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
@@ -735,8 +766,44 @@ function DataAnalysis() {
               
               É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
             />
+            </div>
+            }
 
 
+            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && loadingLightGBM && (
+              <ProgressionBar requestCompleted={LightGBMStatus} title={"Carregando LightGBM"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && LightGBMStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataLightGBM.performance_metrics}
+              confusionMatrix={dataLightGBM.confusion_matrix}
+              title="LightGBM Métricas"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataLightGBM.confusion_matrix}
+              title="LightGBM Matriz de confusão"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataLightGBM.feature_importance}
+              title="LightGBM Feature Importance"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
             </div>
             }
             </div>
