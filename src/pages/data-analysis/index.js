@@ -10,6 +10,7 @@ import ProgressionBar from '../../components/ProgressionBar';
 import MachineLearningPlot from '../../components/MachineLearningPlot';
 import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
 import FeatureImportancePlot from '../../components/FeatureImportancePlot';
+import DecisionTreePlot from '../../components/DecisionTreePlot';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -64,6 +65,10 @@ function DataAnalysis() {
   const [loadingRandomForest, setLoadingRandomForest] = useState(false);
   const [randomForestStatus, setRandomForestStatus] = useState("running");
   const [dataRandomForest, setDataRandomForest] = useState([]);
+
+  const [loadingDecisionTree, setLoadingDecisionTree] = useState(false);
+  const [decisionTreeStatus, setDecisionTreeStatus] = useState("running");
+  const [dataDecisionTree, setDataDecisionTree] = useState([]);
 
 
 
@@ -197,6 +202,8 @@ function DataAnalysis() {
         }
         if(extension === "json"){
           return await response.json();
+        }if (extension === "png"){
+          return await url;
         }else{
         return await response.text();
         }
@@ -272,6 +279,31 @@ function DataAnalysis() {
     } catch (error) {
       console.error('Error:', error);
       setLoadingXGBoost(false);
+    }
+  };
+  
+  const handleDecisionTree = async (fileId, fileName) => {
+    setLoadingDecisionTree(true);
+    try {
+      const status_decision_tree = await checkStatusForDataWithRetry(fileId, "decision_tree");
+      if (status_decision_tree === "finished") {
+        const data_decision_tree = await getData(fileName, 'decision_tree', 15, 10, "png");
+        if (data_decision_tree) {
+          console.log(data_decision_tree);
+          setDataDecisionTree(data_decision_tree);
+          setDecisionTreeStatus(status_decision_tree);
+          setLoadingDecisionTree(false);
+        }
+      } else if (status_decision_tree === "running") {
+        setTimeout(() => {
+          handleDecisionTree(fileId, fileName);
+        }, 10000);
+      } else {
+        setDecisionTreeStatus(status_decision_tree);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingDecisionTree(false);
     }
   };
 
@@ -619,6 +651,9 @@ function DataAnalysis() {
         if(attributes.ml_random_forest){
           handleRandomForest(fileId,fileName);
         }
+        if(attributes.ml_decision_tree){
+          handleDecisionTree(fileId,fileName);
+        }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
         }
@@ -943,6 +978,22 @@ function DataAnalysis() {
             />
             </div>
             }
+
+
+            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && loadingDecisionTree && (
+              <ProgressionBar requestCompleted={decisionTreeStatus} title={"Carregando Decision Tree"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && decisionTreeStatus === "finished" && 
+              <DecisionTreePlot
+                dataDecisionTree={dataDecisionTree}
+                title="Árvore de Decisão"
+                description={`Uma árvore de decisão é um modelo de aprendizado de máquina que representa um processo de tomada de decisão através de uma estrutura hierárquica em forma de árvore. Ela divide os dados em subconjuntos menores, buscando maximizar a homogeneidade dos grupos em relação à variável de interesse. Essas árvores são amplamente utilizadas pela sua interpretabilidade e facilidade de uso, sendo capazes de lidar com diversos tipos de dados. 
+No entanto, podem ser suscetíveis a overfitting, o que pode ser mitigado por técnicas de controle. Para problemas mais complexos, é comum recorrer a técnicas de conjunto, como Random Forest ou Gradient Boosting, que combinam várias árvores para obter resultados mais precisos e robustos. Em resumo, as árvores de decisão são ferramentas valiosas para análise de dados e tomada de decisões em várias áreas.`}
+              />
+            }
+
+
             </div>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
