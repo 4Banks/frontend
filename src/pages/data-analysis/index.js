@@ -10,6 +10,7 @@ import ProgressionBar from '../../components/ProgressionBar';
 import MachineLearningPlot from '../../components/MachineLearningPlot';
 import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
 import { ConstructionOutlined } from '@mui/icons-material';
+import FeatureImportancePlot from '../../components/FeatureImportancePlot';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -698,6 +699,26 @@ async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
                                               
                                               F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
             />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataXGBoost.confusion_matrix}
+              title="XGBoost Matriz de confusão"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataXGBoost.feature_importance}
+              title="XGBoost Feature Importance"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+
+
             </div>
             }
             </div>
