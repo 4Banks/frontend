@@ -217,13 +217,9 @@ function DataAnalysis() {
     return null;
   };
   
-
   const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
     try {
-      const response = await fetch(`${ADDRESS}/superficial_analysis/${fileId}/${fileName}`);
-      if (response.ok) {
-        console.log("Superficial analysis completed");
         const csvData = await getCSV(fileName, 'superficial_analysis',15,10);
         if (csvData) {
           const rows = csvData.split('\n');
@@ -389,9 +385,6 @@ function DataAnalysis() {
   setTracesBasicAnalysis(tracesBasicAnalysis);
   setBasicAnalysisReady(true);
   setLoadingSuperficialAnalysis(false);
-        } else {
-          console.error('Failed to fetch CSV data.');
-        }
       } else {
         console.error('Failed to fetch balance data.');
       }
@@ -404,7 +397,7 @@ function DataAnalysis() {
   console.log(selectedKeys);
   console.log(selectedItems);
   console.log(attributes);
-  
+  console.log("Enviou requisição");
   if (uploadCompleted && fileId && fileName) {
     try {
       const fetchedData = await fetchDataAndProcess(attributes);
@@ -415,7 +408,7 @@ function DataAnalysis() {
           handleSuperficialAnalysis(fileName);
         }
         if(attributes.ml_logistic_regression || attributes.ml_decision_tree || attributes.ml_random_forest || attributes.ml_xgboost || attributes.ml_lightgbm || attributes.ml_mlp){
-          // setLoadingMachineLearning(true);
+          // handleMachineLearningAnalysis(fileName);
         }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
