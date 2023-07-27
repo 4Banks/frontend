@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { LinearProgress } from '@mui/material';
-import '../styles/sampling-progression.css';
+import '../styles/progression-bar.css';
 import '../styles/global.css';
 
-const SamplingProgression = ({ requestCompleted }) => {
+const ProgressionBar = ({ requestCompleted ,title}) => {
   useEffect(() => {
     console.log('requestCompleted:', requestCompleted);
   }, [ requestCompleted]);
 
   return (
-    <div className="sampling_progression">
-      <div className="sampling_progression_container">
-        <p className='sampling_progression_title'>Amostragem dos dados</p>
-      <div className="sampling_progression_bar">
+    <div className="progression">
+      <div className="progression_container">
+        <p className='progression_title'>{title}</p>
+      <div className="progression_bar">
         <LinearProgress variant={requestCompleted ? "determinate" : "indeterminate"} value={100} />
       </div>
     </div>
@@ -20,4 +20,4 @@ const SamplingProgression = ({ requestCompleted }) => {
   );
 };
 
-export default SamplingProgression;
+export default ProgressionBar;

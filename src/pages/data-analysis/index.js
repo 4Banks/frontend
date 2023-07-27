@@ -6,7 +6,8 @@ import CsvUpload from '../../components/CsvUpload';
 import DataProcessing from '../../components/DataProcessing';
 import AnalysisSelection from '../../components/AnalysisSelection';
 import LineChart from '../../components/LineChart';
-import SuperficialAnalysisProgression from '../../components/SuperficialAnalysisProgression';
+import ProgressionBar from '../../components/ProgressionBar';
+import LogisticRegressionPlot from '../../components/LogisticRegressionPlot';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -15,7 +16,7 @@ function DataAnalysis() {
   const [uploadCompleted, setUploadCompleted] = useState(false);
   // const [loading, setLoading] = useState(false);
   const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
-  // const [loadingMachineLearning, setLoadingMachineLearning] = useState(false);
+  const [loadingLogisticRegression, setLoadingLogisticRegression] = useState(false);
   // const [loadingAnomalyDetection, setLoadingAnomalyDetection] = useState(false);
 
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
@@ -42,6 +43,9 @@ function DataAnalysis() {
 
   const [basicAnalysisReady, setBasicAnalysisReady] = useState(false);
   const [tracesBasicAnalysis, setTracesBasicAnalysis] = useState([]);
+
+  const [logisticRegressionReady, setLogisticRegressionReady] = useState(false);
+  const [dataLogisticRegression, setDataLogisticRegression] = useState([]);
 
   useEffect(() => {
     console.log(fileId);
@@ -144,7 +148,7 @@ function DataAnalysis() {
     }
   }
 
-  const getCSV = async (fileName, method, time, maxAttempts) => {
+  const getData = async (fileName, method, time, maxAttempts, extension) => {
     const BUCKET_NAME = process.env.REACT_APP_BUCKET_NAME;
     const REFRESH_TOKEN = process.env.REACT_APP_REFRESH_TOKEN;
     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
@@ -168,7 +172,8 @@ function DataAnalysis() {
       return data.access_token;
     };
   
-    const tryFetchCSV = async (headers) => {
+    const tryFetch = async (headers,extension) => {
+      setTimeout(time * 1000);
       try {
         const response = await fetch(url, {
           method: 'GET',
@@ -176,20 +181,22 @@ function DataAnalysis() {
         });
   
         if (!response.ok) {
-          throw new Error('Failed to fetch CSV file.');
+          throw new Error('Failed to fetch file.');
         }
-  
+        if(extension === "json"){
+          return await response.json();
+        }else{
         return await response.text();
-  
+        }
       } catch (error) {
-        console.error('Error while fetching CSV:', error);
+        console.error('Error while fetching file:', error);
         return null;
       }
     };
   
     const OAUTH2_TOKEN = await getAccessToken();
     console.log(OAUTH2_TOKEN);
-    const url_base = `${fileId}/${fileName}_${method}.csv`;
+    const url_base = `${fileId}/${fileName}_${method}.${extension}`;
     console.log(url_base);
     const OBJECT_NAME = encodeURIComponent(url_base);
     const url = `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o/${OBJECT_NAME}?alt=media`;
@@ -198,13 +205,12 @@ function DataAnalysis() {
     };
   
     let attempts = 0;
-    let csvData = null;
+    let data = null;
   
     while (attempts < maxAttempts) {
-      csvData = await tryFetchCSV(headers);
-      if (csvData !== null) {
-        console.log(csvData);
-        return csvData;
+      data = await tryFetch(headers,extension);
+      if (data !== null) {
+        return data;
       }
   
       attempts++;
@@ -217,10 +223,26 @@ function DataAnalysis() {
     return null;
   };
   
+  const handleLogisticRegression = async (fileName) => {
+    setLoadingLogisticRegression(true);
+    try {
+      const data_logistic_regression= await getData(fileName, 'logistic_regression',15,10,"json");
+      if (data_logistic_regression) {
+        console.log(data_logistic_regression);
+        setDataLogisticRegression(data_logistic_regression);
+        console.log(data_logistic_regression.performance_metrics);
+        console.log(data_logistic_regression.confusion_matrix);
+        setLogisticRegressionReady(true);
+        setLoadingLogisticRegression(false);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
     try {
-        const csvData = await getCSV(fileName, 'superficial_analysis',15,10);
+        const csvData = await getData(fileName, 'superficial_analysis',15,10,"csv");
         if (csvData) {
           const rows = csvData.split('\n');
           const headersRow = rows[0].split(',');
@@ -407,8 +429,8 @@ function DataAnalysis() {
           setLoadingSuperficialAnalysis(true);
           handleSuperficialAnalysis(fileName);
         }
-        if(attributes.ml_logistic_regression || attributes.ml_decision_tree || attributes.ml_random_forest || attributes.ml_xgboost || attributes.ml_lightgbm || attributes.ml_mlp){
-          // handleMachineLearningAnalysis(fileName);
+        if(attributes.ml_logistic_regression){
+          handleLogisticRegression(fileName);
         }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
@@ -460,7 +482,7 @@ function DataAnalysis() {
             </button>
 
             {selectedItems.analysisDataSelected.length > 0 && loadingSuperficialAnalysis && (
-              <SuperficialAnalysisProgression requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} />
+              <ProgressionBar requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} title={"Carregando análises superficiais"} />
             )}
 
             {selectedItems.analysisDataSelected.includes("media_moda_mediana") && mediaModaMedianaReady && 
@@ -543,6 +565,28 @@ function DataAnalysis() {
                 yTitle="Valores"
                 description={`Número e porcentagem de dados faltantes e número de campos com o valor zero.`}
               />
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && loadingLogisticRegression && (
+              <ProgressionBar requestCompleted={logisticRegressionReady} title={"Carregando Regressão Logistica"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionReady && 
+            <LogisticRegressionPlot
+              performanceMetrics={dataLogisticRegression.performance_metrics}
+              confusionMatrix={dataLogisticRegression.confusion_matrix}
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
+              
+                                          É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}                     
+            />
             }
 
           </>
