@@ -3,19 +3,29 @@ import { LinearProgress } from '@mui/material';
 import '../styles/progression-bar.css';
 import '../styles/global.css';
 
-const ProgressionBar = ({ requestCompleted ,title}) => {
+const ProgressionBar = ({ requestStatus, title }) => {
   useEffect(() => {
-    console.log('requestCompleted:', requestCompleted);
-  }, [ requestCompleted]);
+    console.log('requestStatus:', requestStatus);
+  }, [requestStatus]);
+
+  const getStatusText = () => {
+    if (requestStatus === 'failed') {
+      return 'Falhou';
+    }
+    return null;
+  };
 
   return (
     <div className="progression">
       <div className="progression_container">
         <p className='progression_title'>{title}</p>
-      <div className="progression_bar">
-        <LinearProgress variant={requestCompleted ? "determinate" : "indeterminate"} value={100} />
+        {requestStatus !== 'failed' && (
+          <div className="progression_bar">
+            <LinearProgress variant={requestStatus ? "determinate" : "indeterminate"} value={100} />
+          </div>
+        )}
+        {getStatusText() && <p className="status_text">{getStatusText()}</p>}
       </div>
-    </div>
     </div>
   );
 };
