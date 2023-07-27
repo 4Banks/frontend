@@ -9,6 +9,7 @@ import LineChart from '../../components/LineChart';
 import ProgressionBar from '../../components/ProgressionBar';
 import MachineLearningPlot from '../../components/MachineLearningPlot';
 import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -17,7 +18,6 @@ function DataAnalysis() {
   const [uploadCompleted, setUploadCompleted] = useState(false);
   // const [loading, setLoading] = useState(false);
   const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
-  const [loadingLogisticRegression, setLoadingLogisticRegression] = useState(false);
   // const [loadingAnomalyDetection, setLoadingAnomalyDetection] = useState(false);
 
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
@@ -45,8 +45,14 @@ function DataAnalysis() {
   const [basicAnalysisReady, setBasicAnalysisReady] = useState(false);
   const [tracesBasicAnalysis, setTracesBasicAnalysis] = useState([]);
 
-  const [logisticRegressionReady, setLogisticRegressionReady] = useState(false);
+  const [loadingLogisticRegression, setLoadingLogisticRegression] = useState(false);
+  const [logisticRegressionStatus, setLogisticRegressionStatus] = useState(false);
   const [dataLogisticRegression, setDataLogisticRegression] = useState([]);
+
+  const [loadingXGBoost, setLoadingXGBoost] = useState(false);
+  const [XGBoostStatus, setXGBoostStatus] = useState("running");
+  const [dataXGBoost, setDataXGBoost] = useState([]);
+
 
   useEffect(() => {
     console.log(fileId);
@@ -66,13 +72,6 @@ function DataAnalysis() {
     machineLearningSelected: [],
     anomalyDetectionSelected: [],
   });
-
-  // useEffect(() => {
-  //   console.log(fileId);
-  //   console.log(fileName);
-  //   console.log(loading)
-  // }, [fileId, fileName,loading]);
-
 
   const attributes = {
     index: false,
@@ -113,7 +112,6 @@ function DataAnalysis() {
   };
 
   async function fetchDataAndProcess(attributes) {
-    // setLoading(true);
     const filteredAttributes = {};
     Object.keys(attributes).forEach(key => {
       const value = attributes[key];
@@ -141,7 +139,7 @@ function DataAnalysis() {
         throw new Error('Network response was not ok');
       }
   
-      const data = await response.json();
+      const data = await response.text();
       return data; 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -196,9 +194,7 @@ function DataAnalysis() {
     };
   
     const OAUTH2_TOKEN = await getAccessToken();
-    console.log(OAUTH2_TOKEN);
     const url_base = `${fileId}/${fileName}_${method}.${extension}`;
-    console.log(url_base);
     const OBJECT_NAME = encodeURIComponent(url_base);
     const url = `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o/${OBJECT_NAME}?alt=media`;
     const headers = {
@@ -223,23 +219,106 @@ function DataAnalysis() {
     console.error('Maximum attempts reached. Failed to fetch CSV.');
     return null;
   };
-  
-  const handleLogisticRegression = async (fileName) => {
-    setLoadingLogisticRegression(true);
+
+  async function getContentFromURL(endpoint, fileId) {
+    const baseURL = `${ADDRESS}/${endpoint}/${fileId}`;
     try {
-      const data_logistic_regression= await getData(fileName, 'logistic_regression',15,10,"json");
-      if (data_logistic_regression) {
-        console.log(data_logistic_regression);
-        setDataLogisticRegression(data_logistic_regression);
-        console.log(data_logistic_regression.performance_metrics);
-        console.log(data_logistic_regression.confusion_matrix);
-        setLogisticRegressionReady(true);
-        setLoadingLogisticRegression(false);
+      const response = await fetch(baseURL);
+      
+      if (!response.ok) {
+        throw new Error(`Network response was not ok. Status: ${response.status}`);
+      }
+      const data = await response.json();
+      const content = Array.isArray(data) ? data : [data];
+      return content;
+    } catch (error) {
+      console.error("Error fetching content:", error);
+      return null;
+    }
+  }
+
+  const handleXGBoost = async (fileId, fileName) => {
+    setLoadingXGBoost(true);
+    try {
+      const status_xgboost = await checkStatusForDataWithRetry(fileId, "xgboost");
+      if (status_xgboost === "finished") {
+        const data_xgboost = await getData(fileName, 'xgboost', 15, 10, "json");
+        if (data_xgboost) {
+          console.log(data_xgboost);
+          setDataXGBoost(data_xgboost);
+          setXGBoostStatus(status_xgboost);
+          setLoadingXGBoost(false);
+        }
+      } else if (status_xgboost === "running") {
+        setTimeout(() => {
+          handleXGBoost(fileId, fileName);
+        }, 10000);
+      } else {
+        setXGBoostStatus(status_xgboost);
       }
     } catch (error) {
       console.error('Error:', error);
+      setLoadingXGBoost(false);
     }
   };
+  
+
+  function checkStatus(arrayFinished, arrayRunning, arrayFailed, modelName) {
+    if (arrayRunning.some(item => item.model_name === modelName)) {
+      console.log("running")
+      return "running";
+    } else if (arrayFailed.some(item => item.model_name === modelName)) {
+      console.log("failed")
+      return "failed";
+    } else if (arrayFinished.some(item => item.model_name === modelName)) {
+      console.log("finished")
+      return "finished";
+    } else {
+      console.log("not found")
+      return "Model not found";
+    }
+  }
+
+  async function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+
+async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
+  try {
+    let runningData = await getContentFromURL("running_training_tasks", fileId);
+    let finishedData = await getContentFromURL("finished_training_tasks", fileId);
+    let failedData = await getContentFromURL("failed_training_tasks", fileId);
+
+    if (!Array.isArray(runningData) || !Array.isArray(finishedData) || !Array.isArray(failedData)) {
+      console.error("Data is not an array. Retrying...");
+      await wait(5000);
+      return checkStatusForDataWithRetry(fileId, modelName, retryCount - 1);
+    }
+
+    const status = checkStatus(finishedData, runningData, failedData, modelName);
+    return status;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+  // const handleLogisticRegression = async (fileName) => {
+  //   setLoadingLogisticRegression(true);
+  //   try {
+  //     const data_logistic_regression= await getData(fileName, 'logistic_regression',15,10,"json");
+  //     if (data_logistic_regression) {
+  //       console.log(data_logistic_regression);
+  //       setDataLogisticRegression(data_logistic_regression);
+  //       console.log(data_logistic_regression.performance_metrics);
+  //       console.log(data_logistic_regression.confusion_matrix);
+  //       setLogisticRegressionReady(true);
+  //       setLoadingLogisticRegression(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
 
   const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
@@ -418,9 +497,6 @@ function DataAnalysis() {
   };
 
   const handleRequest = async () => {
-  console.log(selectedKeys);
-  console.log(selectedItems);
-  console.log(attributes);
   console.log("Enviou requisição");
   if (uploadCompleted && fileId && fileName) {
     try {
@@ -432,7 +508,10 @@ function DataAnalysis() {
           handleSuperficialAnalysis(fileName);
         }
         if(attributes.ml_logistic_regression){
-          handleLogisticRegression(fileName);
+          // handleLogisticRegression(fileName);
+        }
+        if(attributes.ml_xgboost){
+          handleXGBoost(fileId,fileName);
         }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
@@ -572,7 +651,7 @@ function DataAnalysis() {
               />
             }
 
-            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && loadingLogisticRegression && (
+            {/* {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && loadingLogisticRegression && (
               <ProgressionBar requestCompleted={logisticRegressionReady} title={"Carregando Regressão Logistica"} />
             )}
             {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionReady && 
@@ -596,6 +675,28 @@ function DataAnalysis() {
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
               
                                           É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}  
+            />
+            </div>
+            
+            } */}
+
+            {selectedItems.machineLearningSelected.includes("ml_xgboost") && loadingXGBoost && (
+              <ProgressionBar requestCompleted={XGBoostStatus} title={"Carregando XGBoost"} />
+            )}
+
+
+
+            {selectedItems.machineLearningSelected.includes("ml_xgboost") && XGBoostStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataXGBoost.performance_metrics}
+              confusionMatrix={dataXGBoost.confusion_matrix}
+              title="XGBoost"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
             />
             </div>
             }
