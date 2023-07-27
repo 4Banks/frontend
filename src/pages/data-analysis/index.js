@@ -61,6 +61,11 @@ function DataAnalysis() {
   const [MLPStatus, setMLPStatus] = useState("running");
   const [dataMLP, setDataMLP] = useState([]);
 
+  const [loadingRandomForest, setLoadingRandomForest] = useState(false);
+  const [randomForestStatus, setRandomForestStatus] = useState("running");
+  const [dataRandomForest, setDataRandomForest] = useState([]);
+
+
 
   useEffect(() => {
     console.log(fileId);
@@ -267,6 +272,31 @@ function DataAnalysis() {
     } catch (error) {
       console.error('Error:', error);
       setLoadingXGBoost(false);
+    }
+  };
+
+  const handleRandomForest = async (fileId, fileName) => {
+    setLoadingRandomForest(true);
+    try {
+      const status_random_forest = await checkStatusForDataWithRetry(fileId, "random_forest");
+      if (status_random_forest === "finished") {
+        const data_random_forest = await getData(fileName, 'random_forest', 15, 10, "json");
+        if (data_random_forest) {
+          console.log(data_random_forest);
+          setDataRandomForest(data_random_forest);
+          setRandomForestStatus(status_random_forest);
+          setLoadingRandomForest(false);
+        }
+      } else if (status_random_forest === "running") {
+        setTimeout(() => {
+          handleRandomForest(fileId, fileName);
+        }, 10000);
+      } else {
+        setRandomForestStatus(status_random_forest);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingRandomForest(false);
     }
   };
 
@@ -586,6 +616,9 @@ function DataAnalysis() {
         if(attributes.ml_mlp){
           handleMLP(fileId,fileName);
         }
+        if(attributes.ml_random_forest){
+          handleRandomForest(fileId,fileName);
+        }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
         }
@@ -866,6 +899,42 @@ function DataAnalysis() {
             <FeatureImportancePlot 
               featureImportance={dataMLP.feature_importance}
               title="MLP Feature Importance"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+            {selectedItems.machineLearningSelected.includes("ml_random_forest") && loadingRandomForest && (
+              <ProgressionBar requestCompleted={randomForestStatus} title={"Carregando Random Forest"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_random_forest") && randomForestStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataRandomForest.performance_metrics}
+              confusionMatrix={dataRandomForest.confusion_matrix}
+              title="Random Forest Métricas"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataRandomForest.confusion_matrix}
+              title="Random Forest Matriz de confusão"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataRandomForest.feature_importance}
+              title="Random Forest Feature Importance"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
