@@ -785,7 +785,7 @@ function DataAnalysis() {
             {selectedItems.analysisDataSelected.includes("intervalo_valores") && basicAnalysisReady && 
             <LineChart
                 traces={tracesBasicAnalysis}
-                title="Análise básica"
+                title="Análise básica das features"
                 xTitle="Features"
                 yTitle="Valores"
                 description={`Número e porcentagem de dados faltantes e número de campos com o valor zero.`}
@@ -800,7 +800,7 @@ function DataAnalysis() {
             <MachineLearningPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
-              title="Regressão Logística Métricas"
+              title="Métricas da Regressão Logística"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -810,7 +810,7 @@ function DataAnalysis() {
             <ConfusionMatrixPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
-              title="Regressão Logística Matriz de Confusão"
+              title="Matriz de Confusão da Regressão Logística"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
@@ -819,7 +819,7 @@ function DataAnalysis() {
             />
               <FeatureImportancePlot 
               featureImportance={dataLogisticRegression.feature_importance}
-              title="Regressão Logística Feature Importance"
+              title="Importancia da Variáveis da Regressão Logística"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
@@ -840,7 +840,7 @@ function DataAnalysis() {
             <MachineLearningPlot
               performanceMetrics={dataXGBoost.performance_metrics}
               confusionMatrix={dataXGBoost.confusion_matrix}
-              title="XGBoost Métricas"
+              title="Métricas do XGBoost"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -849,7 +849,7 @@ function DataAnalysis() {
             />
             <ConfusionMatrixPlot
               confusionMatrix={dataXGBoost.confusion_matrix}
-              title="XGBoost Matriz de confusão"
+              title="Matriz de Confusão do XGBoost"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
@@ -858,7 +858,7 @@ function DataAnalysis() {
             />
             <FeatureImportancePlot 
               featureImportance={dataXGBoost.feature_importance}
-              title="XGBoost Feature Importance"
+              title="Importancia da Variáveis do XGBoost"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
@@ -878,7 +878,7 @@ function DataAnalysis() {
             <MachineLearningPlot
               performanceMetrics={dataLightGBM.performance_metrics}
               confusionMatrix={dataLightGBM.confusion_matrix}
-              title="LightGBM Métricas"
+              title="Métricas do LightGBM"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -887,7 +887,7 @@ function DataAnalysis() {
             />
             <ConfusionMatrixPlot
               confusionMatrix={dataLightGBM.confusion_matrix}
-              title="LightGBM Matriz de confusão"
+              title="Matriz de confusão LightGBM"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
@@ -896,7 +896,7 @@ function DataAnalysis() {
             />
             <FeatureImportancePlot 
               featureImportance={dataLightGBM.feature_importance}
-              title="LightGBM Feature Importance"
+              title="Importância das Variáveis do LightGBM"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
@@ -915,7 +915,7 @@ function DataAnalysis() {
             <MachineLearningPlot
               performanceMetrics={dataMLP.performance_metrics}
               confusionMatrix={dataMLP.confusion_matrix}
-              title="MLP Métricas"
+              title="Métricas do MLP"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -924,7 +924,7 @@ function DataAnalysis() {
             />
             <ConfusionMatrixPlot
               confusionMatrix={dataMLP.confusion_matrix}
-              title="MLP Matriz de confusão"
+              title="Matriz de Confusão do MLP"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
@@ -933,7 +933,7 @@ function DataAnalysis() {
             />
             <FeatureImportancePlot 
               featureImportance={dataMLP.feature_importance}
-              title="MLP Feature Importance"
+              title="Importância das Variáveis do MLP"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
@@ -951,7 +951,7 @@ function DataAnalysis() {
             <MachineLearningPlot
               performanceMetrics={dataRandomForest.performance_metrics}
               confusionMatrix={dataRandomForest.confusion_matrix}
-              title="Random Forest Métricas"
+              title="Métricas do Random Forest"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
@@ -960,7 +960,7 @@ function DataAnalysis() {
             />
             <ConfusionMatrixPlot
               confusionMatrix={dataRandomForest.confusion_matrix}
-              title="Random Forest Matriz de confusão"
+              title="Matriz de Confusão do Random Forest"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
@@ -969,7 +969,7 @@ function DataAnalysis() {
             />
             <FeatureImportancePlot 
               featureImportance={dataRandomForest.feature_importance}
-              title="Random Forest Feature Importance"
+              title="Importância das Variáveis do Random Forest"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
@@ -989,7 +989,7 @@ function DataAnalysis() {
                 dataDecisionTree={dataDecisionTree}
                 title="Árvore de Decisão"
                 description={`Uma árvore de decisão é um modelo de aprendizado de máquina que representa um processo de tomada de decisão através de uma estrutura hierárquica em forma de árvore. Ela divide os dados em subconjuntos menores, buscando maximizar a homogeneidade dos grupos em relação à variável de interesse. Essas árvores são amplamente utilizadas pela sua interpretabilidade e facilidade de uso, sendo capazes de lidar com diversos tipos de dados. 
-No entanto, podem ser suscetíveis a overfitting, o que pode ser mitigado por técnicas de controle. Para problemas mais complexos, é comum recorrer a técnicas de conjunto, como Random Forest ou Gradient Boosting, que combinam várias árvores para obter resultados mais precisos e robustos. Em resumo, as árvores de decisão são ferramentas valiosas para análise de dados e tomada de decisões em várias áreas.`}
+                              No entanto, podem ser suscetíveis a overfitting, o que pode ser mitigado por técnicas de controle. Para problemas mais complexos, é comum recorrer a técnicas de conjunto, como Random Forest ou Gradient Boosting, que combinam várias árvores para obter resultados mais precisos e robustos. Em resumo, as árvores de decisão são ferramentas valiosas para análise de dados e tomada de decisões em várias áreas.`}
               />
             }
 
