@@ -57,6 +57,10 @@ function DataAnalysis() {
   const [LightGBMStatus, setLightGBMStatus] = useState("running");
   const [dataLightGBM, setDataLightGBM] = useState([]);
 
+  const [loadingMLP, setLoadingMLP] = useState(false);
+  const [MLPStatus, setMLPStatus] = useState("running");
+  const [dataMLP, setDataMLP] = useState([]);
+
 
   useEffect(() => {
     console.log(fileId);
@@ -226,7 +230,6 @@ function DataAnalysis() {
 
   async function getContentFromURL(endpoint, fileId) {
     const baseURL = `${ADDRESS}/${endpoint}/${fileId}`;
-    console.log(baseURL)
     try {
       const response = await fetch(baseURL);
       
@@ -264,6 +267,31 @@ function DataAnalysis() {
     } catch (error) {
       console.error('Error:', error);
       setLoadingXGBoost(false);
+    }
+  };
+
+  const handleMLP = async (fileId, fileName) => {
+    setLoadingMLP(true);
+    try {
+      const status_mlp = await checkStatusForDataWithRetry(fileId, "mlp");
+      if (status_mlp === "finished") {
+        const data_mlp = await getData(fileName, 'mlp', 15, 10, "json");
+        if (data_mlp) {
+          console.log(data_mlp);
+          setDataMLP(data_mlp);
+          setMLPStatus(status_mlp);
+          setLoadingMLP(false);
+        }
+      } else if (status_mlp === "running") {
+        setTimeout(() => {
+          handleMLP(fileId, fileName);
+        }, 10000);
+      } else {
+        setMLPStatus(status_mlp);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingMLP(false);
     }
   };
 
@@ -555,6 +583,9 @@ function DataAnalysis() {
         if(attributes.ml_lightgbm){
           handleLightGBM(fileId,fileName);
         }
+        if(attributes.ml_mlp){
+          handleMLP(fileId,fileName);
+        }
         if(attributes.anomaly_detection){
           // setLoadingAnomalyDetection(true);
         }
@@ -711,7 +742,7 @@ function DataAnalysis() {
             <ConfusionMatrixPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
-              title="Regressão Logística Matrix de Confusão"
+              title="Regressão Logística Matriz de Confusão"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
@@ -798,6 +829,43 @@ function DataAnalysis() {
             <FeatureImportancePlot 
               featureImportance={dataLightGBM.feature_importance}
               title="LightGBM Feature Importance"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_mlp") && loadingMLP && (
+              <ProgressionBar requestCompleted={MLPStatus} title={"Carregando MLP"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_mlp") && MLPStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataMLP.performance_metrics}
+              confusionMatrix={dataMLP.confusion_matrix}
+              title="MLP Métricas"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataMLP.confusion_matrix}
+              title="MLP Matriz de confusão"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataMLP.feature_importance}
+              title="MLP Feature Importance"
               featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
               
               Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
