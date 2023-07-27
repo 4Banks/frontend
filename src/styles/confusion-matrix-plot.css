@@ -1,12 +1,4 @@
-.logistic_regression_plot {
-    display: flex;
-    width: 100%;
-    max-width: 1440px;
-    justify-content: space-between;
-    flex-direction: column;
-}
-
-.logistic_regression {
+.confusion_matrix {
     display: flex;
     width: 100%;
     max-width: 1440px;
@@ -14,21 +6,21 @@
     align-items: center;
 }
 
-.logistic_regression_info {
+.confusion_matrix_info {
     margin-top: 45px;
     margin-left: 50px;
 }
 
-.logistic_regression_title {
+.confusion_matrix_title {
     font-size: 2rem;
     font-weight: 500;
     margin-bottom: 0.5em;
     color: var(--secondaryColor);
 }
 
-.logistic_regression_description {
+.confusion_matrix_description {
     white-space: pre-line;
-    width: 600px;
+    width: 650px;
     font-size: 1.1rem;
     text-align: justify;
     color: var(--textColor);
@@ -36,11 +28,11 @@
 }
 
 @media only screen and (max-width: 980px) {
-    .logistic_regression {
+    .confusion_matrix {
         flex-direction: column;
         align-items: center;
     }
-    .logistic_regression_info {
+    .confusion_matrix_info {
         width: 80%;
         margin-top: 0px;
         display: flex;
@@ -51,7 +43,7 @@
         margin-left: 0px;
         text-align: center;
     }
-    .logistic_regression_description {
+    .confusion_matrix_description {
         width: 100%;
         height: auto;
         margin-bottom: 30px;
@@ -59,7 +51,7 @@
 }
 
 @media only screen and (max-width: 600px) {
-    .logistic_regression_info_title {
+    .confusion_matrix_info_title {
         font-size: 1.5rem;
         font-weight: 500;
         margin-bottom: 0.5em;

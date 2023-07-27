@@ -7,7 +7,8 @@ import DataProcessing from '../../components/DataProcessing';
 import AnalysisSelection from '../../components/AnalysisSelection';
 import LineChart from '../../components/LineChart';
 import ProgressionBar from '../../components/ProgressionBar';
-import LogisticRegressionPlot from '../../components/LogisticRegressionPlot';
+import MachineLearningPlot from '../../components/MachineLearningPlot';
+import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -239,6 +240,7 @@ function DataAnalysis() {
       console.error('Error:', error);
     }
   };
+
   const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
     try {
@@ -474,12 +476,15 @@ function DataAnalysis() {
           </>
         )}
         {uploadCompleted ? (
-          <>
-            <button className="data_analysis_submit_button" onClick={() => {
-              handleRequest(); 
-            }}>
-            Analisar
-            </button>
+          <div className="data_analysis_results">
+            <div className="data_analysis_submit_button_container">
+              <button className="data_analysis_submit_button" onClick={() => {
+                handleRequest(); 
+              }}>
+              Analisar
+              </button>
+            </div>
+
 
             {selectedItems.analysisDataSelected.length > 0 && loadingSuperficialAnalysis && (
               <ProgressionBar requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} title={"Carregando análises superficiais"} />
@@ -570,26 +575,31 @@ function DataAnalysis() {
             {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && loadingLogisticRegression && (
               <ProgressionBar requestCompleted={logisticRegressionReady} title={"Carregando Regressão Logistica"} />
             )}
-
             {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionReady && 
-            <LogisticRegressionPlot
+            <div>
+            <MachineLearningPlot
               performanceMetrics={dataLogisticRegression.performance_metrics}
               confusionMatrix={dataLogisticRegression.confusion_matrix}
+              title="Regressão Logística"
               performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
                                               
                                               Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
                                               
                                               F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
-
+            />
+            <ConfusionMatrixPlot
+              performanceMetrics={dataLogisticRegression.performance_metrics}
+              confusionMatrix={dataLogisticRegression.confusion_matrix}
+              title="Matriz de confusão"
               confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
               
               Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
               
-                                          É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}                     
+                                          É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}  
             />
+            </div>
             }
-
-          </>
+            </div>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
         )}
