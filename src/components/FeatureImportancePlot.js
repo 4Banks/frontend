@@ -21,10 +21,12 @@ const FeatureImportancePlot = ({ featureImportance,title,featureImportanceDescri
   };
 
   const layout = {
-    title: 'Feature Importance',
-    xaxis: { title: 'Importance' },
+    title: '{title}',
+    xaxis: { title: 'Importância' },
     yaxis: { title: 'Features' }, 
+    displayModeBar: false,
     margin: { l: 150 }, 
+    responsive: true,
   };
 
   return (
