@@ -19,7 +19,7 @@ return (
             y: y,
         },
         ]}
-        layout={{ width: 600, height: 400, title: title }}
+        layout={{ width: 600, height: 400, title: title, responsive: true, scrollZoom: true}}
     />
     </div>
 );
