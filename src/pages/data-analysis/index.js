@@ -7,6 +7,7 @@ import DataProcessing from '../../components/DataProcessing';
 import AnalysisSelection from '../../components/AnalysisSelection';
 
 function DataAnalysis() {
+  const ADDRESS = process.env.REACT_APP_ADDRESS;
   const [fileId, setFileId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
@@ -68,10 +69,50 @@ function DataAnalysis() {
     setFileName(fileName);
   };
 
+  async function fetchDataAndProcess(attributes) {
+    const filteredAttributes = {};
+    Object.keys(attributes).forEach(key => {
+      const value = attributes[key];
+      if (value !== null && value !== undefined && value !== '') {
+        filteredAttributes[key] = value;
+      }
+    });
+  
+    const queryString = Object.keys(filteredAttributes)
+      .map(key => `${key}=${filteredAttributes[key]}`)
+      .join('&');
+  
+    const baseURL = `${ADDRESS}/pipeline/${fileId}/${fileName}`;
+    const url = `${baseURL}${queryString ? '?' : ''}${queryString}`;
+  
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  
   const handleRequest = async () => {
     console.log(selectedKeys);
     console.log(selectedItems);
     console.log(attributes);
+    if (uploadCompleted && fileId && fileName) {
+      fetchDataAndProcess(attributes);
+    } else {
+      console.error('File upload is not completed yet.');
+    }
   };
 
   return (
@@ -110,8 +151,6 @@ function DataAnalysis() {
             }}>
             Analisar
             </button>
-
-            
           </>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
