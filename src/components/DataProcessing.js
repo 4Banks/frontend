@@ -24,16 +24,14 @@ function DataProcessing({ selectedKeys,selectedItems,handleExclusiveSelectionCha
   ]
 
   const outlierRemoval = [
-    { key:"z_score", item: "Z-score method", description:  "" },
-    { key:"robust_z_score", item: "Robust Z-score", description:  "" },
-    { key:"iqe_methord", item: "I.Q.R method", description: "" },
-    { key:"winsorization", item: "Winsorization method (Percentile Capping)", description:  "" },
-    { key:"dbscan", item: "DBSCAN Clustering", description: "" },
+    { key:"outliers_z_score", item: "Z-score method", description:  "" },
+    { key:"outliers_robust_z_score", item: "Robust Z-score", description:  "" },
+    { key:"outliers_iqr", item: "I.Q.R method", description: "" },
+    { key:"outliers_winsorization", item: "Winsorization method (Percentile Capping)", description:  "" },
   ]
 
 
   const emptySetsTreatment = [
-    { key:"remove", item: "Remoção", description:  "" },
     { key:"mean", item: "Média", description:  "" },
     { key:"most_frequent", item: "Moda", description:  "" },
     { key:"median", item: "Mediana", description:  "" },
@@ -49,18 +47,18 @@ function DataProcessing({ selectedKeys,selectedItems,handleExclusiveSelectionCha
         <ExclusiveSelection
           headerText="Amostragem do dataset"
           data={sampling}
-          selectedValue={selectedKeys.samplingSelected}
+          selectedValue={selectedKeys.balanceSelected}
           onChange={(selectedItem) =>
-            handleExclusiveSelectionChange('samplingSelected', selectedItem)
+            handleExclusiveSelectionChange('balanceSelected', selectedItem)
           }
         />
 
         <ExclusiveSelection
           headerText="Detecção de outliers"
           data={outlierDetection}
-          selectedValue={selectedKeys.outlierDetectionSelected}
+          selectedValue={selectedKeys.outlierTreatmentSelected}
           onChange={(selectedItem) =>
-            handleExclusiveSelectionChange('outlierDetectionSelected', selectedItem)
+            handleExclusiveSelectionChange('outlierTreatmentSelected', selectedItem)
           }
         />
 
