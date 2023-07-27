@@ -17,7 +17,7 @@ function DataAnalysis() {
   const [fileId, setFileId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
-  // const [loading, setLoading] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
   const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
   // const [loadingAnomalyDetection, setLoadingAnomalyDetection] = useState(false);
 
@@ -158,6 +158,7 @@ function DataAnalysis() {
       }
   
       const data = await response.text();
+      setLoadingRequest(false);
       return data; 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -384,6 +385,7 @@ function DataAnalysis() {
 
   
   const handleLogisticRegression = async (fileId, fileName) => {
+    setLoadingLogisticRegression(true);
     try {
       const status_logistic_regression = await checkStatusForDataWithRetry(fileId, "logistic_regression");
       if (status_logistic_regression === "finished") {
@@ -627,8 +629,8 @@ function DataAnalysis() {
   };
 
   const handleRequest = async () => {
-  console.log("Enviou requisição");
-  if (uploadCompleted && fileId && fileName) {
+    setLoadingRequest(true);
+    if (uploadCompleted && fileId && fileName) {
     try {
       const fetchedData = await fetchDataAndProcess(attributes);
       if(fetchedData) {
@@ -705,9 +707,36 @@ function DataAnalysis() {
               </button>
             </div>
 
+            {loadingRequest && (
+              <ProgressionBar requestCompleted={loadingRequest} title={"Enviando solicitação"} />
+            )}
 
             {selectedItems.analysisDataSelected.length > 0 && loadingSuperficialAnalysis && (
               <ProgressionBar requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} title={"Carregando análises superficiais"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") &&  loadingLogisticRegression && (
+              <ProgressionBar requestCompleted={logisticRegressionStatus} title={"Carregando Regressão Logistica"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_xgboost") && loadingXGBoost && (
+              <ProgressionBar requestCompleted={XGBoostStatus} title={"Carregando XGBoost"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && loadingLightGBM && (
+              <ProgressionBar requestCompleted={LightGBMStatus} title={"Carregando LightGBM"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_mlp") && loadingMLP && (
+              <ProgressionBar requestCompleted={MLPStatus} title={"Carregando MLP"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_random_forest") && loadingRandomForest && (
+              <ProgressionBar requestCompleted={randomForestStatus} title={"Carregando Random Forest"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && loadingDecisionTree && (
+              <ProgressionBar requestCompleted={decisionTreeStatus} title={"Carregando Decision Tree"} />
             )}
 
             {selectedItems.analysisDataSelected.includes("media_moda_mediana") && mediaModaMedianaReady && 
@@ -792,9 +821,6 @@ function DataAnalysis() {
               />
             }
 
-            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") &&  loadingLogisticRegression && (
-              <ProgressionBar requestCompleted={logisticRegressionStatus} title={"Carregando Regressão Logistica"} />
-            )}
             {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionStatus === "finished" && 
             <div>
             <MachineLearningPlot
@@ -831,10 +857,6 @@ function DataAnalysis() {
             
             }
 
-            {selectedItems.machineLearningSelected.includes("ml_xgboost") && loadingXGBoost && (
-              <ProgressionBar requestCompleted={XGBoostStatus} title={"Carregando XGBoost"} />
-            )}
-
             {selectedItems.machineLearningSelected.includes("ml_xgboost") && XGBoostStatus === "finished" && 
             <div>
             <MachineLearningPlot
@@ -867,11 +889,6 @@ function DataAnalysis() {
             />
             </div>
             }
-
-
-            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && loadingLightGBM && (
-              <ProgressionBar requestCompleted={LightGBMStatus} title={"Carregando LightGBM"} />
-            )}
 
             {selectedItems.machineLearningSelected.includes("ml_lightgbm") && LightGBMStatus === "finished" && 
             <div>
@@ -906,10 +923,6 @@ function DataAnalysis() {
             </div>
             }
 
-            {selectedItems.machineLearningSelected.includes("ml_mlp") && loadingMLP && (
-              <ProgressionBar requestCompleted={MLPStatus} title={"Carregando MLP"} />
-            )}
-
             {selectedItems.machineLearningSelected.includes("ml_mlp") && MLPStatus === "finished" && 
             <div>
             <MachineLearningPlot
@@ -942,9 +955,6 @@ function DataAnalysis() {
             />
             </div>
             }
-            {selectedItems.machineLearningSelected.includes("ml_random_forest") && loadingRandomForest && (
-              <ProgressionBar requestCompleted={randomForestStatus} title={"Carregando Random Forest"} />
-            )}
 
             {selectedItems.machineLearningSelected.includes("ml_random_forest") && randomForestStatus === "finished" && 
             <div>
@@ -978,11 +988,6 @@ function DataAnalysis() {
             />
             </div>
             }
-
-
-            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && loadingDecisionTree && (
-              <ProgressionBar requestCompleted={decisionTreeStatus} title={"Carregando Decision Tree"} />
-            )}
 
             {selectedItems.machineLearningSelected.includes("ml_decision_tree") && decisionTreeStatus === "finished" && 
               <DecisionTreePlot
