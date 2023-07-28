@@ -1,12 +1,12 @@
 import React from 'react';
 import MultiSelection from './MultiSelection';
 import '../styles/global.css';
-import '../styles/data-analysis-multi-selection.css'
+import '../styles/data-analysis-analysis-selection.css'
 import superficial_analysis from '../assets/superficial_analysis.svg'
 import anomaly_detection from '../assets/anomaly_detection.svg'
 import machine_learning from '../assets/machine_learning.svg'
 
-function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
+function AnalysisSelection({ selectedItems, handleMultiSelectionChange }) {
 
     const analysisData = [
         {  key:"media_moda_mediana",  item: "Média, Mediana e Moda", description: "Média: Valor obtido pela soma de todos os elementos de um conjunto dividido pelo número de elementos presentes. \nMediana: Valor central de um conjunto ordenado, separando-o em duas partes iguais. \nModa: O valor que mais se repete em um conjunto de dados, podendo haver mais de uma moda ou nenhuma." },
@@ -20,13 +20,12 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
       ];
     
       const machineLearning = [
-        {  key:"5", item: "Regressão Logística", description: "Regressão Logística: Modelo de aprendizado de máquina para classificação, que prevê a probabilidade de pertencer a uma classe e é comumente usado para problemas binários ou multiclasse." },
-        {  key:"6", item: "Árvore de decisão", description: "Árvore de decisão: Algoritmo de aprendizado de máquina que usa uma estrutura em forma de árvore para tomar decisões sequenciais, dividindo os dados em subconjuntos até encontrar as melhores opções para classificação ou regressão, sendo valorizado por sua interpretabilidade e eficácia." },
-        {  key:"7", item: "Random forest", description: "Random Forest: Algoritmo de aprendizado de máquina que constrói várias árvores de decisão durante o treinamento e, posteriormente, faz a predição combinando as respostas das árvores individuais. Essa técnica reduz o overfitting e aumenta a precisão geral, tornando-a amplamente utilizada em problemas de classificação e regressão." },
-        {  key:"8", item: "XGBoost", description: "XGBoost (Extreme Gradient Boosting): É um algoritmo de aprendizado de máquina baseado em boosting que utiliza árvores de decisão como base para construir um modelo preditivo mais preciso. Ele otimiza a função de perda usando gradient boosting, combinando as previsões de várias árvores para melhorar a performance e eficiência em problemas de classificação, regressão e ranking. " },
-        {  key:"9", item: "LightGBM", description: "" },
-        {  key:"10", item: "SVM", description: "SVM (Support Vector Machine): Algoritmo de aprendizado de máquina supervisionado usado para resolver problemas de classificação e regressão. Ele busca encontrar o hiperplano que melhor separa os dados de diferentes classes no espaço de características, maximizando a margem entre as classes, sendo eficaz em lidar com dados de alta dimensionalidade." },
-        {  key:"11", item: "AutoEncoder", description: "Autoencoder: Rede neural do tipo encoder-decoder que busca aprender uma representação compacta dos dados de entrada, também conhecida como codificação latente. A rede é treinada para reconstruir a entrada original a partir da codificação latente, minimizando o erro de reconstrução, é amplamente usado em tarefas de redução de dimensionalidade e denoising (remoção de ruído)" },
+        {  key:"ml_logistic_regression", item: "Regressão Logística", description: "Regressão Logística: Modelo de aprendizado de máquina para classificação, que prevê a probabilidade de pertencer a uma classe e é comumente usado para problemas binários ou multiclasse." },
+        {  key:"ml_decision_tree", item: "Árvore de decisão", description: "Árvore de decisão: Algoritmo de aprendizado de máquina que usa uma estrutura em forma de árvore para tomar decisões sequenciais, dividindo os dados em subconjuntos até encontrar as melhores opções para classificação ou regressão, sendo valorizado por sua interpretabilidade e eficácia." },
+        {  key:"ml_random_forest", item: "Random forest", description: "Random Forest: Algoritmo de aprendizado de máquina que constrói várias árvores de decisão durante o treinamento e, posteriormente, faz a predição combinando as respostas das árvores individuais. Essa técnica reduz o overfitting e aumenta a precisão geral, tornando-a amplamente utilizada em problemas de classificação e regressão." },
+        {  key:"ml_xgboost", item: "XGBoost", description: "XGBoost (Extreme Gradient Boosting): É um algoritmo de aprendizado de máquina baseado em boosting que utiliza árvores de decisão como base para construir um modelo preditivo mais preciso. Ele otimiza a função de perda usando gradient boosting, combinando as previsões de várias árvores para melhorar a performance e eficiência em problemas de classificação, regressão e ranking. " },
+        {  key:"ml_lightgbm", item: "LightGBM", description: "" },
+        {  key:"ml_mlp", item: "MLP", description: "" },
       ];
     
       const anomalyDetection = [
@@ -74,4 +73,4 @@ function DataMultiSelection({ selectedItems, handleMultiSelectionChange }) {
       );
     }
     
-    export default DataMultiSelection;
+    export default AnalysisSelection;

@@ -14,6 +14,16 @@
     margin-bottom: 10px;
 }
 
+.multi_selection_container.no-image {
+    height: 500px;
+    width: 350px;
+}
+
+.multi_selection_header.no-image-header {
+    height: 100px;
+    padding: 15px;
+}
+
 .multi_selection_header {
     display: flex;
     flex-direction: column;
@@ -27,4 +37,10 @@
 
 .multi_selection_body {
     padding: 20px;
+}
+
+@media only screen and (max-width: 980px) {
+    .multi_selection_container.no-image {
+        margin: 10px;
+    }
 }

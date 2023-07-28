@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/data-analysis.css";
 import CsvUpload from '../../components/CsvUpload';
-import DataExclusiveSelection from '../../components/DataExclusiveSelection';
-import DataMultiSelection from '../../components/DataMultiSelection';
-import SamplingProgression from '../../components/SamplingProgression';
+import DataProcessing from '../../components/DataProcessing';
+import AnalysisSelection from '../../components/AnalysisSelection';
 import LineChart from '../../components/LineChart';
-import SuperficialAnalysisProgression from '../../components/SuperficialAnalysisProgression';
+import ProgressionBar from '../../components/ProgressionBar';
+import MachineLearningPlot from '../../components/MachineLearningPlot';
+import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
+import FeatureImportancePlot from '../../components/FeatureImportancePlot';
+import DecisionTreePlot from '../../components/DecisionTreePlot';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
   const [fileId, setFileId] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [uploadCompleted, setUploadCompleted] = useState(false);
-  const [requestCompleted, setRequestCompleted] = useState(false);
+  const [loadingRequest, setLoadingRequest] = useState(false);
+  const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
+  // const [loadingAnomalyDetection, setLoadingAnomalyDetection] = useState(false);
 
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
   const [tracesMediaModaMediana, setTracesMediaModaMediana] = useState([]);
@@ -42,33 +46,68 @@ function DataAnalysis() {
   const [basicAnalysisReady, setBasicAnalysisReady] = useState(false);
   const [tracesBasicAnalysis, setTracesBasicAnalysis] = useState([]);
 
+  const [loadingLogisticRegression, setLoadingLogisticRegression] = useState(false);
+  const [logisticRegressionStatus, setLogisticRegressionStatus] = useState(false);
+  const [dataLogisticRegression, setDataLogisticRegression] = useState([]);
 
-  const [loading, setLoading] = useState(false);
-  const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
+  const [loadingXGBoost, setLoadingXGBoost] = useState(false);
+  const [XGBoostStatus, setXGBoostStatus] = useState("running");
+  const [dataXGBoost, setDataXGBoost] = useState([]);
+
+  const [loadingLightGBM, setLoadingLightGBM] = useState(false);
+  const [LightGBMStatus, setLightGBMStatus] = useState("running");
+  const [dataLightGBM, setDataLightGBM] = useState([]);
+
+  const [loadingMLP, setLoadingMLP] = useState(false);
+  const [MLPStatus, setMLPStatus] = useState("running");
+  const [dataMLP, setDataMLP] = useState([]);
+
+  const [loadingRandomForest, setLoadingRandomForest] = useState(false);
+  const [randomForestStatus, setRandomForestStatus] = useState("running");
+  const [dataRandomForest, setDataRandomForest] = useState([]);
+
+  const [loadingDecisionTree, setLoadingDecisionTree] = useState(false);
+  const [decisionTreeStatus, setDecisionTreeStatus] = useState("running");
+  const [dataDecisionTree, setDataDecisionTree] = useState([]);
 
 
 
   useEffect(() => {
     console.log(fileId);
     console.log(fileName);
-    console.log(loading)
-  }, [fileId, fileName,loading]);
+  }, [fileId, fileName]);
 
-  useEffect(() => {
-    console.log(requestCompleted)
-  }, [requestCompleted]);
 
   const [selectedKeys, setSelectedKeys] = useState({
-    samplingSelected: null,
-    outlierTreatmentSelected: null,
-    outlierRemovalSelected: null,
+    balanceSelected: { key:"", item: "", description:  "" },
+    outlierTreatmentSelected: { key:"", item: "", description:  "" },
+    emptySetsTreatment: { key:"", item: "", description:  "" },
   });  
 
   const [selectedItems, setSelectedItems] = useState({
+    outlierRemovalSelected: [],
     analysisDataSelected: [],
     machineLearningSelected: [],
     anomalyDetectionSelected: [],
   });
+
+  const attributes = {
+    index: false,
+    missing_data_method: selectedKeys.emptySetsTreatment.key,
+    outliers_z_score: selectedItems.outlierRemovalSelected.includes('outliers_z_score'),
+    outliers_robust_z_score: selectedItems.outlierRemovalSelected.includes('outliers_robust_z_score'),
+    outliers_iqr: selectedItems.outlierRemovalSelected.includes('outliers_iqr'),
+    outliers_winsorization: selectedItems.outlierRemovalSelected.includes('outliers_winsorization'),
+    outliers_treatment_method: selectedKeys.outlierTreatmentSelected.key,
+    balance_method: selectedKeys.balanceSelected.key,
+    superficial_analysis: selectedItems.analysisDataSelected.length > 0,
+    ml_logistic_regression: selectedItems.machineLearningSelected.includes('ml_logistic_regression'),
+    ml_decision_tree: selectedItems.machineLearningSelected.includes('ml_decision_tree'),
+    ml_random_forest: selectedItems.machineLearningSelected.includes('ml_random_forest'),
+    ml_xgboost: selectedItems.machineLearningSelected.includes('ml_xgboost'),
+    ml_lightgbm: selectedItems.machineLearningSelected.includes('ml_lightgbm'),
+    ml_mlp: selectedItems.machineLearningSelected.includes('ml_mlp'),
+  };
 
   const handleExclusiveSelectionChange = (key, selectedItem) => {
     setSelectedKeys((prevSelectedKeys) => ({
@@ -90,71 +129,338 @@ function DataAnalysis() {
     setFileName(fileName);
   };
 
-  const downloadCSV = async (updatedFileName, method) => {
+  async function fetchDataAndProcess(attributes) {
+    const filteredAttributes = {};
+    Object.keys(attributes).forEach(key => {
+      const value = attributes[key];
+      if (value !== null && value !== undefined && value !== '') {
+        filteredAttributes[key] = value;
+      }
+    });
+  
+    const queryString = Object.keys(filteredAttributes)
+      .map(key => `${key}=${filteredAttributes[key]}`)
+      .join('&');
+  
+    const baseURL = `${ADDRESS}/pipeline/${fileId}/${fileName}`;
+    const url = `${baseURL}${queryString ? '?' : ''}${queryString}`;
+  
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.text();
+      setLoadingRequest(false);
+      return data; 
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error; 
+    }
+  }
+
+  const getData = async (fileName, method, time, maxAttempts, extension) => {
     const BUCKET_NAME = process.env.REACT_APP_BUCKET_NAME;
     const REFRESH_TOKEN = process.env.REACT_APP_REFRESH_TOKEN;
     const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
     const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
   
-    const response = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: REFRESH_TOKEN,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET, 
-      }),
-    });
+    const getAccessToken = async () => {
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: REFRESH_TOKEN,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+        }),
+      });
   
-    const data = await response.json();
-    const OAUTH2_TOKEN = data.access_token;
-    console.log(OAUTH2_TOKEN);
-    const url_base = `${fileId}/${updatedFileName}_${method}.csv`;
-    console.log(url_base);
+      const data = await response.json();
+      return data.access_token;
+    };
+  
+    const tryFetch = async (headers,extension) => {
+      setTimeout(time * 1000);
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: headers,
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch file.');
+        }
+        if(extension === "json"){
+          return await response.json();
+        }if (extension === "png"){
+          return await url;
+        }else{
+        return await response.text();
+        }
+      } catch (error) {
+        console.error('Error while fetching file:', error);
+        return null;
+      }
+    };
+  
+    const OAUTH2_TOKEN = await getAccessToken();
+    const url_base = `${fileId}/${fileName}_${method}.${extension}`;
     const OBJECT_NAME = encodeURIComponent(url_base);
     const url = `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o/${OBJECT_NAME}?alt=media`;
     const headers = {
       Authorization: `Bearer ${OAUTH2_TOKEN}`,
     };
   
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: headers,
-      });
+    let attempts = 0;
+    let data = null;
   
-      if (!response.ok) {
-        throw new Error('Failed to fetch CSV file.');
+    while (attempts < maxAttempts) {
+      data = await tryFetch(headers,extension);
+      if (data !== null) {
+        return data;
       }
   
-      const csvData = await response.text();
-      console.log(csvData);
+      attempts++;
+      if (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, time * 1000));
+      }
+    }
   
-      return csvData;
-  
-    } catch (error) {
-      console.error('Error while fetching CSV:', error);
-      return null;
+    console.error('Maximum attempts reached. Failed to fetch CSV.');
+    return null;
+  };
+
+  async function getContentFromURL(endpoint, fileId) {
+    const baseURL = `${ADDRESS}/${endpoint}/${fileId}`;
+    try {
+      const response = await fetch(baseURL);
       
+      if (!response.ok) {
+        throw new Error(`Network response was not ok. Status: ${response.status}`);
+      }
+      const data = await response.json();
+      const content = Array.isArray(data) ? data : [data];
+      return content;
+    } catch (error) {
+      console.error("Error fetching content:", error);
+      return null;
+    }
+  }
+
+  const handleXGBoost = async (fileId, fileName) => {
+    setLoadingXGBoost(true);
+    try {
+      const status_xgboost = await checkStatusForDataWithRetry(fileId, "xgboost");
+      if (status_xgboost === "finished") {
+        const data_xgboost = await getData(fileName, 'xgboost', 15, 10, "json");
+        if (data_xgboost) {
+          console.log(data_xgboost);
+          setDataXGBoost(data_xgboost);
+          setXGBoostStatus(status_xgboost);
+          setLoadingXGBoost(false);
+        }
+      } else if (status_xgboost === "running") {
+        setTimeout(() => {
+          handleXGBoost(fileId, fileName);
+        }, 10000);
+      } else {
+        setXGBoostStatus(status_xgboost);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingXGBoost(false);
     }
   };
   
+  const handleDecisionTree = async (fileId, fileName) => {
+    setLoadingDecisionTree(true);
+    try {
+      const status_decision_tree = await checkStatusForDataWithRetry(fileId, "decision_tree");
+      if (status_decision_tree === "finished") {
+        const data_decision_tree = await getData(fileName, 'decision_tree', 15, 10, "png");
+        if (data_decision_tree) {
+          console.log(data_decision_tree);
+          setDataDecisionTree(data_decision_tree);
+          setDecisionTreeStatus(status_decision_tree);
+          setLoadingDecisionTree(false);
+        }
+      } else if (status_decision_tree === "running") {
+        setTimeout(() => {
+          handleDecisionTree(fileId, fileName);
+        }, 10000);
+      } else {
+        setDecisionTreeStatus(status_decision_tree);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingDecisionTree(false);
+    }
+  };
 
-  const handleSuperficialAnalysis = async (updatedFileName) => {
+  const handleRandomForest = async (fileId, fileName) => {
+    setLoadingRandomForest(true);
+    try {
+      const status_random_forest = await checkStatusForDataWithRetry(fileId, "random_forest");
+      if (status_random_forest === "finished") {
+        const data_random_forest = await getData(fileName, 'random_forest', 15, 10, "json");
+        if (data_random_forest) {
+          console.log(data_random_forest);
+          setDataRandomForest(data_random_forest);
+          setRandomForestStatus(status_random_forest);
+          setLoadingRandomForest(false);
+        }
+      } else if (status_random_forest === "running") {
+        setTimeout(() => {
+          handleRandomForest(fileId, fileName);
+        }, 10000);
+      } else {
+        setRandomForestStatus(status_random_forest);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingRandomForest(false);
+    }
+  };
+
+  const handleMLP = async (fileId, fileName) => {
+    setLoadingMLP(true);
+    try {
+      const status_mlp = await checkStatusForDataWithRetry(fileId, "mlp");
+      if (status_mlp === "finished") {
+        const data_mlp = await getData(fileName, 'mlp', 15, 10, "json");
+        if (data_mlp) {
+          console.log(data_mlp);
+          setDataMLP(data_mlp);
+          setMLPStatus(status_mlp);
+          setLoadingMLP(false);
+        }
+      } else if (status_mlp === "running") {
+        setTimeout(() => {
+          handleMLP(fileId, fileName);
+        }, 10000);
+      } else {
+        setMLPStatus(status_mlp);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingMLP(false);
+    }
+  };
+
+  const handleLightGBM = async (fileId, fileName) => {
+    setLoadingLightGBM(true);
+    try {
+      const status_lightgbm = await checkStatusForDataWithRetry(fileId, "lightgbm");
+      if (status_lightgbm === "finished") {
+        const data_lightgbm = await getData(fileName, 'lightgbm', 15, 10, "json");
+        if (data_lightgbm) {
+          console.log(data_lightgbm);
+          setDataLightGBM(data_lightgbm);
+          setLightGBMStatus(status_lightgbm);
+          setLoadingLightGBM(false);
+        }
+      } else if (status_lightgbm === "running") {
+        setTimeout(() => {
+          handleLightGBM(fileId, fileName);
+        }, 10000);
+      } else {
+        setLightGBMStatus(status_lightgbm);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingLightGBM(false);
+    }
+  };
+
+  
+  const handleLogisticRegression = async (fileId, fileName) => {
+    setLoadingLogisticRegression(true);
+    try {
+      const status_logistic_regression = await checkStatusForDataWithRetry(fileId, "logistic_regression");
+      if (status_logistic_regression === "finished") {
+        const data_xgboost = await getData(fileName, 'logistic_regression', 15, 10, "json");
+        if (data_xgboost) {
+          console.log(data_xgboost);
+          setDataLogisticRegression(data_xgboost);
+          setLogisticRegressionStatus(status_logistic_regression);
+          setLoadingLogisticRegression(false);
+        }
+      } else if (status_logistic_regression === "running") {
+        setTimeout(() => {
+          handleLogisticRegression(fileId, fileName);
+        }, 10000);
+      } else {
+        setLogisticRegressionStatus(status_logistic_regression);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setLoadingLogisticRegression(false);
+    }
+  };
+
+  function checkStatus(arrayFinished, arrayRunning, arrayFailed, modelName) {
+    if (arrayRunning.some(item => item.model_name === modelName)) {
+      console.log("running")
+      return "running";
+    } else if (arrayFailed.some(item => item.model_name === modelName)) {
+      console.log("failed")
+      return "failed";
+    } else if (arrayFinished.some(item => item.model_name === modelName)) {
+      console.log("finished")
+      return "finished";
+    } else {
+      console.log("not found")
+      return "not found";
+    }
+  }
+
+  async function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+
+    async function checkStatusForDataWithRetry(fileId, modelName, retryCount = 3) {
+      try {
+        let runningData = await getContentFromURL("running_training_tasks", fileId);
+        let finishedData = await getContentFromURL("finished_training_tasks", fileId);
+        let failedData = await getContentFromURL("failed_training_tasks", fileId);
+    
+        const status = checkStatus(finishedData, runningData, failedData, modelName);
+    
+        if (status === "not found" && retryCount > 0) {
+          console.error("Model not found. Retrying...");
+          await wait(10000);
+          return checkStatusForDataWithRetry(fileId, modelName, retryCount - 1);
+        }
+    
+        return status;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  
+  
+
+  const handleSuperficialAnalysis = async (fileName) => {
     setLoadingSuperficialAnalysis(true);
     try {
-      const response = await fetch(`${ADDRESS}/superficial_analysis/${fileId}/${updatedFileName}`);
-      if (response.ok) {
-        console.log("Superficial analysis completed");
-        const csvData = await downloadCSV(updatedFileName, 'superficial_analysis');
+        const csvData = await getData(fileName, 'superficial_analysis',15,10,"csv");
         if (csvData) {
           const rows = csvData.split('\n');
           const headersRow = rows[0].split(',');
-          const vKeys = headersRow.slice(2).filter(key => key.startsWith('V'));
-
+          const vKeys = headersRow.slice(2).filter(key => key !== "Time" && (key.startsWith('V') || key === "Amount"));
+          console.log(vKeys);
           const meanRow = rows.find(row => row.startsWith('Média'));
           const modeRow = rows.find(row => row.startsWith('Moda'));
           const medianRow = rows.find(row => row.startsWith('Mediana'));
@@ -314,9 +620,6 @@ function DataAnalysis() {
   setTracesBasicAnalysis(tracesBasicAnalysis);
   setBasicAnalysisReady(true);
   setLoadingSuperficialAnalysis(false);
-        } else {
-          console.error('Failed to fetch CSV data.');
-        }
       } else {
         console.error('Failed to fetch balance data.');
       }
@@ -324,48 +627,46 @@ function DataAnalysis() {
       console.error('Error fetching balance data:', error);
     }
   };
-  
 
-  
-  
   const handleRequest = async () => {
-    console.log(selectedKeys);
-    console.log(selectedItems);
-    const { samplingSelected, outlierTreatmentSelected, outlierRemovalSelected } = selectedKeys;
-    const toastRemoval = () => toast.error("Por favor, escolha um método de detecção de outliers ao selecionar a remoção de outliers.", { autoClose: 8000 });
-  
-    if (!outlierTreatmentSelected && outlierRemovalSelected) {
-      toastRemoval();
-      return;
-    }
-  
-    if (samplingSelected) {
-      setLoading(true);
-      setRequestCompleted(false);
-      try {
-        const response = await fetch(`${ADDRESS}/balance/${fileId}/${fileName}?method=${selectedKeys.samplingSelected.key}`);
-        if (response.ok) {
-          const data = await response.json();
-          const responseString = data.message;
-          const splitString = responseString.split('/');
-          const newFileId = splitString[splitString.length - 2];
-          const newFileName = splitString[splitString.length - 1].split('.').slice(0, -1).join('.');
-          setFileId(newFileId);
-          setFileName(newFileName);
-          setRequestCompleted(true);
-          await handleSuperficialAnalysis(newFileName);
-        } else {
-          console.error('Failed to fetch balance data.');
+    setLoadingRequest(true);
+    if (uploadCompleted && fileId && fileName) {
+    try {
+      const fetchedData = await fetchDataAndProcess(attributes);
+      if(fetchedData) {
+        console.log(fetchedData);
+        if(attributes.superficial_analysis){
+          handleSuperficialAnalysis(fileName);
         }
-      } catch (error) {
-        console.error('Error fetching balance data:', error);
+        if(attributes.ml_logistic_regression){
+          handleLogisticRegression(fileId, fileName);
+        }
+        if(attributes.ml_xgboost){
+          handleXGBoost(fileId,fileName);
+        }
+        if(attributes.ml_lightgbm){
+          handleLightGBM(fileId,fileName);
+        }
+        if(attributes.ml_mlp){
+          handleMLP(fileId,fileName);
+        }
+        if(attributes.ml_random_forest){
+          handleRandomForest(fileId,fileName);
+        }
+        if(attributes.ml_decision_tree){
+          handleDecisionTree(fileId,fileName);
+        }
+        if(attributes.anomaly_detection){
+          // setLoadingAnomalyDetection(true);
+        }
       }
-    } else {
-      console.log("Método de amostragem não selecionado")
-      await handleSuperficialAnalysis(fileName);
-
+    } catch (error) {
+      console.error('Error processing data:', error);
     }
-  };
+  } else {
+    console.error('File upload is not completed yet.');
+  }
+};
 
   return (
     <div>
@@ -383,30 +684,59 @@ function DataAnalysis() {
 
         {uploadCompleted && (
           <>
-            <DataExclusiveSelection
+            <DataProcessing
               selectedKeys={selectedKeys}
+              selectedItems={selectedItems}
               handleExclusiveSelectionChange={handleExclusiveSelectionChange}
+              handleMultiSelectionChange={handleMultiSelectionChange}
+
             />
-            <DataMultiSelection
+            <AnalysisSelection
               selectedItems={selectedItems}
               handleMultiSelectionChange={handleMultiSelectionChange}
             />
           </>
         )}
         {uploadCompleted ? (
-          <>
-            <button className="data_analysis_submit_button" onClick={() => {
-              handleRequest(); 
-            }}>
-            Analisar
-            </button>
+          <div className="data_analysis_results">
+            <div className="data_analysis_submit_button_container">
+              <button className="data_analysis_submit_button" onClick={() => {
+                handleRequest(); 
+              }}>
+              Analisar
+              </button>
+            </div>
 
-            {selectedKeys.samplingSelected && loading && (
-              <SamplingProgression requestCompleted={requestCompleted} />
+            {loadingRequest && (
+              <ProgressionBar requestCompleted={loadingRequest} title={"Enviando solicitação"} />
             )}
 
             {selectedItems.analysisDataSelected.length > 0 && loadingSuperficialAnalysis && (
-              <SuperficialAnalysisProgression requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} />
+              <ProgressionBar requestCompleted={mediaModaMedianaReady || standardDeviationReady ||  maxMinReady || skewnessReady || kurtosisReady || iqrReady || rangeValuesReady || basicAnalysisReady} title={"Carregando análises superficiais"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") &&  loadingLogisticRegression && (
+              <ProgressionBar requestCompleted={logisticRegressionStatus} title={"Carregando Regressão Logistica"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_xgboost") && loadingXGBoost && (
+              <ProgressionBar requestCompleted={XGBoostStatus} title={"Carregando XGBoost"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && loadingLightGBM && (
+              <ProgressionBar requestCompleted={LightGBMStatus} title={"Carregando LightGBM"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_mlp") && loadingMLP && (
+              <ProgressionBar requestCompleted={MLPStatus} title={"Carregando MLP"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_random_forest") && loadingRandomForest && (
+              <ProgressionBar requestCompleted={randomForestStatus} title={"Carregando Random Forest"} />
+            )}
+
+            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && loadingDecisionTree && (
+              <ProgressionBar requestCompleted={decisionTreeStatus} title={"Carregando Decision Tree"} />
             )}
 
             {selectedItems.analysisDataSelected.includes("media_moda_mediana") && mediaModaMedianaReady && 
@@ -484,14 +814,192 @@ function DataAnalysis() {
             {selectedItems.analysisDataSelected.includes("intervalo_valores") && basicAnalysisReady && 
             <LineChart
                 traces={tracesBasicAnalysis}
-                title="Análise básica"
+                title="Análise básica das features"
                 xTitle="Features"
                 yTitle="Valores"
                 description={`Número e porcentagem de dados faltantes e número de campos com o valor zero.`}
               />
             }
 
-          </>
+            {selectedItems.machineLearningSelected.includes("ml_logistic_regression") && logisticRegressionStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataLogisticRegression.performance_metrics}
+              confusionMatrix={dataLogisticRegression.confusion_matrix}
+              title="Métricas da Regressão Logística"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              performanceMetrics={dataLogisticRegression.performance_metrics}
+              confusionMatrix={dataLogisticRegression.confusion_matrix}
+              title="Matriz de Confusão da Regressão Logística"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall.
+              
+                                          É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}  
+            />
+              <FeatureImportancePlot 
+              featureImportance={dataLogisticRegression.feature_importance}
+              title="Importancia da Variáveis da Regressão Logística"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+
+            
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_xgboost") && XGBoostStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataXGBoost.performance_metrics}
+              confusionMatrix={dataXGBoost.confusion_matrix}
+              title="Métricas do XGBoost"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataXGBoost.confusion_matrix}
+              title="Matriz de Confusão do XGBoost"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataXGBoost.feature_importance}
+              title="Importancia da Variáveis do XGBoost"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_lightgbm") && LightGBMStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataLightGBM.performance_metrics}
+              confusionMatrix={dataLightGBM.confusion_matrix}
+              title="Métricas do LightGBM"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataLightGBM.confusion_matrix}
+              title="Matriz de confusão LightGBM"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataLightGBM.feature_importance}
+              title="Importância das Variáveis do LightGBM"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_mlp") && MLPStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataMLP.performance_metrics}
+              confusionMatrix={dataMLP.confusion_matrix}
+              title="Métricas do MLP"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataMLP.confusion_matrix}
+              title="Matriz de Confusão do MLP"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataMLP.feature_importance}
+              title="Importância das Variáveis do MLP"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_random_forest") && randomForestStatus === "finished" && 
+            <div>
+            <MachineLearningPlot
+              performanceMetrics={dataRandomForest.performance_metrics}
+              confusionMatrix={dataRandomForest.confusion_matrix}
+              title="Métricas do Random Forest"
+              performanceMetricsDescription={`Precision: Mede a proporção de verdadeiros positivos em relação aos exemplos classificados como positivos pelo modelo. Indica a capacidade de identificar corretamente casos relevantes, com poucos falsos positivos.
+                                              
+                                              Recall (Sensibilidade): Mede a proporção de verdadeiros positivos em relação a todos os exemplos que realmente são positivos. Indica a capacidade do modelo de encontrar todos os casos relevantes, evitando falsos negativos.
+                                              
+                                              F1-Score: É a média harmônica da precisão e do recall. Equilibra ambas as métricas e é útil em problemas de classificação com desequilíbrio de classes, considerando falsos positivos e falsos negativos.`}
+            />
+            <ConfusionMatrixPlot
+              confusionMatrix={dataRandomForest.confusion_matrix}
+              title="Matriz de Confusão do Random Forest"
+              confusionMatrixDescription={`A matriz de confusão é uma tabela que compara as previsões de um modelo de classificação com os rótulos verdadeiros. 
+              
+              Ela possui quatro elementos principais: Verdadeiros Positivos (TP), Verdadeiros Negativos (TN), Falsos Positivos (FP) e Falsos Negativos (FN). Essa matriz ajuda a avaliar o desempenho do modelo e calcular métricas importantes, como precisão e recall. 
+              
+              É uma ferramenta essencial para entender e ajustar o modelo para melhorar suas previsões.`}
+            />
+            <FeatureImportancePlot 
+              featureImportance={dataRandomForest.feature_importance}
+              title="Importância das Variáveis do Random Forest"
+              featureImportanceDescription={`Feature Importance, ou Importância das Variáveis, é uma técnica essencial em ciência de dados e aprendizado de máquina.
+              
+              Ela quantifica a contribuição relativa de cada variável no desempenho do modelo. Ao identificar as características mais influentes, é possível tomar decisões embasadas, otimizar o modelo e melhorar a interpretabilidade dos resultados.
+              
+              É uma etapa crucial para resolver problemas complexos em diversas áreas.`}
+            />
+            </div>
+            }
+
+            {selectedItems.machineLearningSelected.includes("ml_decision_tree") && decisionTreeStatus === "finished" && 
+              <DecisionTreePlot
+                dataDecisionTree={dataDecisionTree}
+                title="Árvore de Decisão"
+                description={`Uma árvore de decisão é um modelo de aprendizado de máquina que representa um processo de tomada de decisão através de uma estrutura hierárquica em forma de árvore. Ela divide os dados em subconjuntos menores, buscando maximizar a homogeneidade dos grupos em relação à variável de interesse. Essas árvores são amplamente utilizadas pela sua interpretabilidade e facilidade de uso, sendo capazes de lidar com diversos tipos de dados. 
+                              No entanto, podem ser suscetíveis a overfitting, o que pode ser mitigado por técnicas de controle. Para problemas mais complexos, é comum recorrer a técnicas de conjunto, como Random Forest ou Gradient Boosting, que combinam várias árvores para obter resultados mais precisos e robustos. Em resumo, as árvores de decisão são ferramentas valiosas para análise de dados e tomada de decisões em várias áreas.`}
+              />
+            }
+
+
+            </div>
         ) : (
           <p className="data_analysis_upload_info">Aguarde o upload do arquivo ser concluído para prosseguir.</p>
         )}

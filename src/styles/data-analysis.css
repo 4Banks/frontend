@@ -13,6 +13,15 @@
     margin-bottom: 30px;
 }
 
+.data_analysis_results {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    justify-content: center;
+    flex-direction: column;
+    margin: 50px;
+}
+
 .data_analysis_intro_info {
     display: flex;
     flex-direction: column;
@@ -57,6 +66,11 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
+}
+
+.data_analysis_submit_button_container {
+    display: flex;
+    justify-content: center;
 }
 
 .data_analysis_submit_button {
