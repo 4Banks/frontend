@@ -25,7 +25,9 @@
 .data_analysis_intro_info {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     max-width: 520px;
+    max-height: 500px;
     margin-left: 50px;
 }
 

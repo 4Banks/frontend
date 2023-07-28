@@ -674,7 +674,9 @@ function DataAnalysis() {
         <div className="data_analysis_intro">
           <div className="data_analysis_intro_info">
             <h1 className="title_home">4banks</h1>
-            <p className='data_analysis_intro_info_text'>Descubra um mundo de possibilidades com o 4banks, nossa plataforma de análise de dados voltada para cientistas de dados do time de análise e detecção de fraudes em instituições financeiras. Com nossas ferramentas, você poderá explorar seus dados de transações bancárias de cartão de crédito e obter análises detalhadas, desde insights de alto nível até informações específicas. Nossa metodologia avançada facilita a tomada de decisões estratégicas, permitindo que você identifique padrões suspeitos e detecte atividades fraudulentas com precisão. Experimente agora e transforme seus dados em insights valiosos para proteger seus clientes e impulsionar a segurança financeira da sua instituição.</p>
+            <p className='data_analysis_intro_info_text'>Com a nossa plataforma ficou ainda mais fácil analisar seus dados. Nosso objetivo é simplificar a sua experiência e agilizar seu dia a dia na área de ciência de dados.
+Trazemos funcionalidades do processamento à visualização do resultado para você personalizar completamente sua pipeline, de acordo com a sua necessidade.
+Experimente as diversas opções para seleção de amostragem e transformação do dataset para melhorar a qualidade dos seus dados, e as variadas técnicas de análises superficiais, aprendizado de máquina e detecção de anomalias para obter insights profundos sobre o seu contexto.</p>
             <CsvUpload onUploadSuccess={handleUploadSuccess} />
           </div>
           <div className="data_analysis_intro_info_image_container">
