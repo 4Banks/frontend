@@ -15,9 +15,18 @@ function AboutUsProfile({ name, description, url_photo, link_linkedin, link_gith
                 <img src={github_logo_dark} alt="Github Logo" />
               </a>
           </div>
-            <p className="about_us_profile_description">{description}</p>
+          <p className="about_us_profile_description">
+          {description.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+          </p>
           </div>
+          <div className="about_us_photo_container">
           <img src={url_photo} alt="User" className="about_us_profile_photo" />
+          </div>
       </div>
     );
   }
