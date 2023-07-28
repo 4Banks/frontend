@@ -3,7 +3,6 @@ import MultiSelection from './MultiSelection';
 import '../styles/global.css';
 import '../styles/data-analysis-analysis-selection.css'
 import superficial_analysis from '../assets/superficial_analysis.svg'
-import anomaly_detection from '../assets/anomaly_detection.svg'
 import machine_learning from '../assets/machine_learning.svg'
 
 function AnalysisSelection({ selectedItems, handleMultiSelectionChange }) {
@@ -28,13 +27,6 @@ function AnalysisSelection({ selectedItems, handleMultiSelectionChange }) {
         {  key:"ml_mlp", item: "MLP", description: "" },
       ];
     
-      const anomalyDetection = [
-        {  key:"12", item: "Isolation Forest", description: "Isolation Forest: Algoritmo de detecção de anomalias baseado em árvores de decisão que isola amostras anômalas em um conjunto de dados. Ele constrói várias árvores de decisão aleatórias, atribuindo valores de score às amostras com base em quantas divisões são necessárias para isolá-las. Amostras com menor score são mais prováveis de serem anômalas, tornando o Isolation Forest eficiente para detecção de outliers em grandes conjuntos de dados." },
-        {  key:"13", item: "Local Outlier Factor", description: "Local Outlier Factor (LOF): Algoritmo de detecção de anomalias que avalia o grau de anomalia de cada amostra em relação ao seu entorno local. Ele compara a densidade local de uma amostra com a densidade dos seus vizinhos, atribuindo um fator de anomalia baseado nessa comparação. Amostras com um fator LOF significativamente maior que 1 são consideradas anomalias, permitindo a identificação de pontos de dados que se destacam em relação ao seu contexto local." },
-        {  key:"14", item: "Robust Covariance", description: "Robust Covariance : Técnica estatística que estima a matriz de covariância de um conjunto de dados, levando em consideração a presença de outliers e dados com distribuições não normais. Diferente da covariância tradicional, que é sensível a pontos extremos, a covariância robusta é menos afetada por valores atípicos, tornando-a mais adequada para a análise de dados que podem conter observações anômalas ou desvios significativos da normalidade." },
-        {  key:"15", item: "One Class SVM", description: "One-Class SVM (Support Vector Machine): Algoritmo de aprendizado de máquina usado para detecção de anomalias em dados não rotulados, onde o objetivo é identificar a classe majoritária ou região normal do conjunto de dados. Ele constrói um hiperplano que circunscreve a maioria dos dados em uma única classe, permitindo que novas amostras que se afastem dessa região sejam identificadas como anomalias." },
-      ];
-
       return (
         <div className="data_analysis_multi_selection">
         <div className="data_analysis_multi_selection_intro">
@@ -59,15 +51,7 @@ function AnalysisSelection({ selectedItems, handleMultiSelectionChange }) {
               handleMultiSelectionChange('machineLearningSelected', selectedItems)
             }
           />
-          <MultiSelection
-            headerText="Detecção de anomalias"
-            imageSrc={anomaly_detection}
-            data={anomalyDetection}
-            selectedItems={selectedItems.anomalyDetectionSelected}
-            onChange={(selectedItems) =>
-              handleMultiSelectionChange('anomalyDetectionSelected', selectedItems)
-            }
-          />
+
         </div>
       </div>
       );
