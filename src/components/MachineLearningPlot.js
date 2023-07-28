@@ -32,7 +32,7 @@ const MachineLearningPlot = ({ performanceMetrics, title, performanceMetricsDesc
   const layout = {
     width: 600, height: 400,
     responsive: true,
-    title: {title},
+    title: title,
     displayModeBar: false,
     barmode: 'group',
     xaxis: { title: 'Labels' },
