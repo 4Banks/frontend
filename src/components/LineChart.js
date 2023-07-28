@@ -26,7 +26,7 @@ const LineChart = ({ title, description, traces, xTitle, yTitle }) => {
       <Plot
         className='line_chart_graph'
         data={traces}
-        layout={{ width: 600, height: 400, title: title, xaxis: { title: xTitle }, yaxis: { title: yTitle }, }}
+        layout={{ width: 600, height: 400, title: title, xaxis: { title: xTitle }, yaxis: { title: yTitle }, responsive: true, scrollZoom: true}}
       />
     </div>
   );

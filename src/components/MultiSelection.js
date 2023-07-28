@@ -5,7 +5,7 @@ import '../styles/multi-selection.css';
 import SelectionLabel from './SelectionLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-function MultiSelection({ headerText, imageSrc, data = [], selectedItems = [], onChange }) {
+function MultiSelection({ headerText, imageSrc = "", data = [], selectedItems = [], onChange, height = 600, width = 375 }) {
   const handleSelection = (itemKey) => {
     const newSelectedItems = selectedItems.includes(itemKey)
       ? selectedItems.filter((key) => key !== itemKey)
@@ -15,10 +15,10 @@ function MultiSelection({ headerText, imageSrc, data = [], selectedItems = [], o
   };
 
   return (
-    <div className='multi_selection_container'>
-      <div className="multi_selection_header">
+    <div className={`multi_selection_container ${!imageSrc && 'no-image'}`}>
+      <div className={`multi_selection_header ${!imageSrc && 'no-image-header'}`}>
         <p className='multi_selection_header_text'>{headerText}</p>
-        <img src={imageSrc} alt="multi_selection" />
+        {imageSrc && <img src={imageSrc} alt="multi_selection" />}
       </div>
       <div className="multi_selection_body">
         <FormGroup>
