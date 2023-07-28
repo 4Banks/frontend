@@ -85,7 +85,7 @@ function DataAnalysis() {
   });  
 
   const [selectedItems, setSelectedItems] = useState({
-    outlierRemovalSelected: [],
+    outlierDetectionSelected: [],
     analysisDataSelected: [],
     machineLearningSelected: [],
     anomalyDetectionSelected: [],
@@ -94,10 +94,10 @@ function DataAnalysis() {
   const attributes = {
     index: false,
     missing_data_method: selectedKeys.emptySetsTreatment.key,
-    outliers_z_score: selectedItems.outlierRemovalSelected.includes('outliers_z_score'),
-    outliers_robust_z_score: selectedItems.outlierRemovalSelected.includes('outliers_robust_z_score'),
-    outliers_iqr: selectedItems.outlierRemovalSelected.includes('outliers_iqr'),
-    outliers_winsorization: selectedItems.outlierRemovalSelected.includes('outliers_winsorization'),
+    outliers_z_score: selectedItems.outlierDetectionSelected.includes('outliers_z_score'),
+    outliers_robust_z_score: selectedItems.outlierDetectionSelected.includes('outliers_robust_z_score'),
+    outliers_iqr: selectedItems.outlierDetectionSelected.includes('outliers_iqr'),
+    outliers_winsorization: selectedItems.outlierDetectionSelected.includes('outliers_winsorization'),
     outliers_treatment_method: selectedKeys.outlierTreatmentSelected.key,
     balance_method: selectedKeys.balanceSelected.key,
     superficial_analysis: selectedItems.analysisDataSelected.length > 0,
