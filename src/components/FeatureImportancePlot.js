@@ -21,7 +21,7 @@ const FeatureImportancePlot = ({ featureImportance,title,featureImportanceDescri
   };
 
   const layout = {
-    title: '{title}',
+    title: title,
     xaxis: { title: 'Importância' },
     yaxis: { title: 'Features' }, 
     displayModeBar: false,
