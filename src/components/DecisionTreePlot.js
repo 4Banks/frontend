@@ -25,7 +25,7 @@ const DecisionTreePlot = ({ title, description, dataDecisionTree, fileName}) => 
         <p className='decision_tree_info_title'>{title}</p>
         {renderDescription()}
       </div>
-      <div className="decision_tree_download">
+      <div className="decision_tree_container">
         <img 
           className={`decision_tree_image ${isHovered ? 'opaque' : ''}`}
           src={dataDecisionTree}
@@ -33,9 +33,11 @@ const DecisionTreePlot = ({ title, description, dataDecisionTree, fileName}) => 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         />
+        <div className="decision_tree_download">
       <a className='decision_tree_button' href={dataDecisionTree} target="_blank" rel="noopener noreferrer">
       Clique aqui para baixar a imagem
       </a>
+      </div>
       </div>
     </div>
   );
