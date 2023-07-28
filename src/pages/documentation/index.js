@@ -9,7 +9,7 @@ function Documentation() {
   return (
     <div className='documentation'>
       <div className="documentation_intro">
-        <p className='documentation_intro_title'>Documentação</p>
+        <h1 className='documentation_intro_title'>Documentação</h1>
         <p className='documentation_intro_text'>Saiba mais sobre as técnicas e ferramentas utilizadas para a criação desse produto e os artefatos gerados no processo do desenvolvimento do software.</p>
         <p className='documentation_product_discovery_title'>Descoberta do produto</p>
         <p className='documentation_product_discovery_subtitle'>Visão do produto</p>
