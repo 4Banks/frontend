@@ -42,7 +42,7 @@
 .decision_tree_download {
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .decision_tree_button {
