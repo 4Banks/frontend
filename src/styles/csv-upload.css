@@ -28,6 +28,12 @@
     border-radius: 10px;
     margin-left: 15px;
     font-weight: 600;
+    cursor: pointer;
+}
+
+.home_csv_send_button.disabled {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .home_csv_upload_hidden {
