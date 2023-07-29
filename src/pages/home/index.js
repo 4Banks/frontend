@@ -4,10 +4,16 @@ import finance_home from '../../assets/finance_home.jpg';
 import "../../styles/global.css";
 import "../../styles/home.css";
 import Plot from 'react-plotly.js';
-
+import bsmote_tree from '../../assets/bsmote_tree.png';
+import original_tree from '../../assets/original_tree.png';
+import ImageZoom from "react-image-zooom";
 
 
 function Home() {
+
+  const props_original_tree = {width: 600, height: 600,zoomPosition: "original", zoomWidth: 500, img: original_tree};
+  const props_bsmote_tree = {width: 600, height: 600,zoomPosition: "original", zoomWidth: 500, img: bsmote_tree};
+
   var x_axis = ["Amount", "Time", "V1", "V2", "V3", "V4", "V5", "V6", "V7","V8","V9","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24", "V25", "V26", "V27", "V28"]
   
   var lightgbm_bsmote = {
@@ -251,7 +257,7 @@ function Home() {
           <Plot
           className='line_chart_graph'
           data={data_bsmote}
-          layout={{ barmode:"relative",width: 1200, height: 800, title: "Importância das Features BSmote", responsive: true, scrollZoom: true}}
+          layout={{ barmode:"relative",width: 1400, height: 800, title: "Importância das Features BSmote", responsive: true, scrollZoom: true}}
           />
           </div>
           <br/>
@@ -274,19 +280,44 @@ function Home() {
           <p>Após a fase de treinamento dos modelos de Machine Learning, a avaliação da importância de cada atributo foi efetuada por meio da técnica "Permutation Importance". Esta técnica envolve a aleatorização dos valores de cada atributo de forma independente, seguida da avaliação do impacto resultante na performance do modelo. Assim, a metodologia proporciona uma medida quantitativa do aumento no erro de previsão que ocorre quando a informação fornecida por um dado atributo é removida. Em outras palavras, a técnica busca responder à pergunta: "Qual a degradação no desempenho do modelo quando as informações de um determinado atributo são excluídas?".</p>
           <br/>
           <p>A análise das importâncias obtidas revela que os atributos 'V10' e 'V14' destacam-se em relação aos demais. Este resultado sugere que a remoção desses atributos pode comprometer significativamente a capacidade do modelo de identificar fraudes.</p>
-          </div>
           <Plot
           className='line_chart_graph'
           data={data_smote}
-          layout={{ barmode:"relative",width: 1200, height: 800, title: "Importância das Features Smote", responsive: true, scrollZoom: true}}
+          layout={{ barmode:"relative",width: 1400, height: 800, title: "Importância das Features Smote", responsive: true, scrollZoom: true}}
           />
 
         <Plot
           className='line_chart_graph'
           data={data_original}
-          layout={{ barmode:"relative" ,width: 1200, height: 800, title: "Importância das Features Original", responsive: true, scrollZoom: true}}
+          layout={{ barmode:"relative" ,width: 1400, height: 800, title: "Importância das Features Original", responsive: true, scrollZoom: true}}
           />
+          <br/>
+          <p className='home_data_analysis_subtitle'>Árvores de decisão</p>
+          <br/>
+          <p>Para obter uma compreensão mais aprofundada e intuitiva, uma análise meticulosa das árvores de decisão pode ser realizada, permitindo uma interpretação mais transparente da lógica embutida no modelo.</p>
+          <br/>
+          <p>Observando as árvores, percebe-se um padrão notável: em ambas as árvores que foram treinadas com o conjunto de dados balanceado, o atributo 'V14' é destacado como o nó-raiz. Isso sugere que 'V14' atua como um divisor inicial eficiente, distinguindo com sucesso as transações legítimas das fraudulentas, em particular quando o valor de 'V14' é maior ou menor do que 0.348 em média.</p>
+          <br/>
+          <p>Além disso, os atributos 'V10' e 'V17', que já se destacavam nos outros modelos de Machine Learning analisados, emergem nos estágios iniciais das árvores, reafirmando a sua relevância no processo decisório do modelo. Essa observação sublinha a significância desses atributos na detecção acurada de transações fraudulentas.</p>
+          <br/>
+          <p>Os atributos 'V12' e 'V4' também são proeminentes nos primeiros níveis das árvores, corroborando a importância destacada a eles pelos outros modelos de Machine Learning, em particular pelo modelo de Regressão Logística, que os identificou como alguns dos atributos mais cruciais para a classificação.</p>
+          <br/>
+
+          <div className="zoom_image_tree_original">
+            <p className='zoom_image_tree_title'>Árvore de decisão original</p>
+            <ImageZoom className="zoom_image_tree" src={original_tree} alt="original tree" zoom="200"/>
+          </div>
+
+          <div className="zoom_image_tree_bsmote">
+          <p className='zoom_image_tree_title'>Árvore de decisão BSmote</p>
+          <ImageZoom  src={bsmote_tree} alt="original tree" zoom="300"/>
+          </div>
+
+          </div>
+
       </div>
+
+      
     </div>
   );
 }
