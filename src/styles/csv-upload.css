@@ -35,8 +35,14 @@
 }
 
 .home_csv_upload_limit {
-    margin-top: 10px;
     color: var(--secondaryColor);
+}
+
+.home_csv_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 15px;
 }
 
 .home_csv_upload_warning {
@@ -60,5 +66,9 @@
     }
     .home_progress_bar {
         width: 100%;
+    }
+    .home_csv_info {
+        width: 80%;
+        text-align: justify;
     }
 }

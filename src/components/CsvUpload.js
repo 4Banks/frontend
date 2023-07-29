@@ -133,8 +133,11 @@ const CsvUpload = ({ onUploadSuccess }) => {
       {uploadProgress > 0 && (
         <LinearProgress variant="determinate" value={uploadProgress} className='home_progress_bar'/>
       )}
-      <p className="home_csv_upload_limit">Limite: 200 Mb</p>
-      <p className='home_csv_upload_warning'>Ao inserir o conjunto de dados, por gentileza, verifique se o label das classes estão na coluna "Class".</p>
+      <div className="home_csv_info">
+        <p className="home_csv_upload_limit">Limite: 200 Mb</p>
+        <a href='https://storage.googleapis.com/banks-dev-392615.appspot.com/creditcard.csv'>Clique aqui para baixar o dataset e experimentar a aplicação.</a>
+        <p className='home_csv_upload_warning'>Ao inserir o conjunto de dados, por gentileza, verifique se o label das classes estão na coluna "Class".</p>
+      </div>
     </div>
   );
 };
