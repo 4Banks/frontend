@@ -134,6 +134,7 @@ const CsvUpload = ({ onUploadSuccess }) => {
         <LinearProgress variant="determinate" value={uploadProgress} className='home_progress_bar'/>
       )}
       <p className="home_csv_upload_limit">Limite: 200 Mb</p>
+      <p className='home_csv_upload_warning'>Ao inserir o conjunto de dados, por gentileza, verifique se o label das classes estão na coluna "Class".</p>
     </div>
   );
 };

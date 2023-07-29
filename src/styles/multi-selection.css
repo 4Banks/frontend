@@ -1,8 +1,9 @@
 .multi_selection_container {
     border-radius: 25px;
     border: solid;
-    width: 375px;
-    height: 600px;
+    width: 650px;
+    height: auto;
+    max-height: 400px;
     border-color: var(--secondaryColor);
     margin-bottom: 30px;
 }
@@ -15,7 +16,7 @@
 }
 
 .multi_selection_container.no-image {
-    height: 500px;
+    max-height: none;
     width: 350px;
 }
 
@@ -36,11 +37,24 @@
 }
 
 .multi_selection_body {
-    padding: 20px;
+    padding: 30px;
+}
+
+.multi_selection_body.two-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
 }
 
 @media only screen and (max-width: 980px) {
     .multi_selection_container.no-image {
+        height: 500px;
         margin: 10px;
+    }
+    .multi_selection_body.two-columns {
+        grid-template-columns: 1fr;
+    }
+    .multi_selection_container {
+        max-height: none;
+        width: 90%;
     }
 }

@@ -28,17 +28,24 @@
 
 .decision_tree_image {
     max-height: 350px;
+    max-width: 550px;
+}
+
+.decision_tree_container {
+    margin: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .decision_tree_download {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
+    justify-content: flex-end;
 }
 
 .decision_tree_button {
-    margin: 25px;
     background-color: var(--tertiaryColor);
     border: none;
     width: 300px;
@@ -73,8 +80,8 @@
         height: auto;
         margin-bottom: 30px;
     }
-    .decision_tree_image {
-        width: 80%;
+    .decision_tree_container {
+        height: 500px;
     }
 }
 

@@ -38,6 +38,11 @@
     color: var(--secondaryColor);
 }
 
+.home_csv_upload_warning {
+    margin-top: 10px;
+    color: var(--secondaryColor);
+}
+
 .home_progress_bar {
     margin-top: 10px;
 }
