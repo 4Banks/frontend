@@ -13,6 +13,42 @@ function Home() {
 
   var x_axis = ["Amount", "Time", "V1", "V2", "V3", "V4", "V5", "V6", "V7","V8","V9","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24", "V25", "V26", "V27", "V28"]
   
+
+  var iqr_fraud_percentage = {
+    y: x_axis,
+    x: [0.2852306920762287, 0.0, 2.463891248937978, 1.8187195031790626, 9.27743086529884, 2.852529601722282, 1.6917446116307442, 0.5965599825821903, 3.3638801966919987, 1.0234523908179334, 2.6922612579983096, 4.201769165964617, 37.69230769230769, 2.6648423247328643, 0.23752969121140144, 3.0390840342073644, 0.414651002073255, 4.2888563049853365, 5.350404312668464, 3.14615690959777, 1.3228809407153355, 0.6985956067698955, 1.6831068496930401, 2.126044039483675, 0.8036243999784263, 0.06284038542103058, 1.0247810694987889, 0.17869907076483202, 0.8783801036692798, 0.8964471689407422], 
+    orientation: 'h',
+    name: 'IQR',
+    type: 'bar'
+  };
+
+  var robust_z_score_fraud_percentage = {
+    y: x_axis,
+    x: [0.22975671555259708, 0.0, 3.6390977443609023, 2.18335343787696, 14.301133297355639, 6.8481848184818475, 3.1781226903178124, 0.4190943473372176, 4.797794117647059, 1.242165242165242, 6.15678776290631, 6.494413407821228, 72.75747508305648, 5.045278137128072, 0.0, 6.536356528537921, 0.48661800486618007, 11.702127659574469, 10.233441910966341, 14.80927449513837, 2.03125, 0.8381376871275616, 1.9151718983557549, 3.392857142857143, 0.9070655633354552, 0.26109660574412535, 1.2725344644750796, 0.17152658662092624, 1.1597239784674302, 1.1227655488255281], 
+    orientation: 'h',
+    name: 'Robust Z-Score',
+    type: 'bar'
+  };
+
+  var winsorization_fraud_percentage = {
+    y: x_axis,
+    x: [0.7297970808116768, 0.0351123595505618, 2.035802035802036, 3.0361530361530362, 5.265005265005265, 4.22955422955423, 3.194103194103194, 2.8782028782028783, 4.492804492804493, 2.457002457002457, 3.949447077409163, 6.914706914706915, 6.037206037206038, 6.388206388206388, 0.19305019305019305, 7.23060723060723, 0.4914004914004914, 5.738855738855738, 6.984906984906986, 4.089154089154089, 1.71990171990172, 0.7546507546507547, 1.71990171990172, 0.7722007722007722, 0.8950508950508951, 0.05265005265005265, 1.0354510354510353, 0.22815022815022815, 2.843102843102843, 1.7374517374517375], 
+    orientation: 'h',
+    name: 'Winsorization',
+    type: 'bar'
+  };
+
+  var z_score_fraud_percentage = {
+    y: x_axis,
+    x: [0.2698724239450442, 0.0, 3.458524723047825, 3.0106530801296896, 13.638651233014595, 7.789269553975436, 4.957555178268251, 1.0103181427343078, 6.409879447221406, 2.5349443259891022, 6.977758395115568, 9.346330275229358, 42.39766081871345, 10.875331564986737, 0.25167785234899326, 12.159763313609467, 0.4784688995215311, 14.058738565238324, 14.67196819085487, 12.640949554896142, 2.177110914974993, 0.7104413347685684, 1.9438976377952757, 2.127659574468085, 0.8026159334126041, 0.30441400304414, 1.2815948736205056, 0.19102196752626552, 2.9134353385034584, 1.3480392156862746], 
+    orientation: 'h',
+    name: 'Z-Score',
+    type: 'bar'
+  };
+
+  const data_fraud_percentages = [iqr_fraud_percentage, robust_z_score_fraud_percentage, winsorization_fraud_percentage, z_score_fraud_percentage]
+
+
   var lightgbm_bsmote = {
     x: x_axis,
     y: [0.0002884108095433, 1.524122164249242e-05, 0.0, 2.2275631631363257e-05, 1.172401664795153e-06, 0.006843308517498, 0.0, 3.5172049944254266e-05, 0.0011829532797936, 0.0, 1.1724016648051447e-05, 0.0098423119760829, 0.0002426871446157, 0.0037868573773374, 0.0003552377044374, 0.0291998358637668, 4.689606659213919e-06, 3.517204994426537e-05, 0.0037118236707895, 2.3448033296125104e-06, 0.0009261973152001, 0.0, 7.034409988837531e-06, 0.0, 0.0, 5.744768157563973e-05, -1.1724016648173577e-06, 0.0013306758895597, 0.0002098598980009, 0.0],
@@ -250,12 +286,16 @@ function Home() {
           <br/>
           <p>O gráfico resultante exibe a porcentagem de fraudes detectadas por cada método para cada atributo. Isso pode ser útil para entender quais atributos têm maior probabilidade de sinalizar uma fraude quando apresentam outliers e quais métodos são mais efetivos na detecção dessas fraudes.</p>
           <br/>
-          <div className="home_data_analysis_bsmote">
-          <Plot
-          className='line_chart_graph'
-          data={data_bsmote}
-          layout={{ barmode:"relative",width: 1400, height: 800, title: "Importância das Features BSmote", responsive: true, scrollZoom: true}}
-          />
+          <div className="home_data_analysis_fraud_percentages">
+            <Plot
+            data={data_fraud_percentages}
+            layout={{
+              width: 1400,
+              height: 800,
+              title: "Porcentagem de Fraudes Detectadas por Método de Detecção de Outliers",
+              responsive: true,
+              scrollZoom: true}}
+            />
           </div>
           <br/>
           <p>Analisando o gráfico, é possível observar que os outliers associados ao atributo 'V11' estão fortemente ligados a transações fraudulentas. A ênfase recai sobre o valor de aproximadamente 72.8% dos outliers detectados pelo método Robust Z-Score que são fraudes, seguido de 42.4% para Z-Score e 37.7% para IQR. Isso sugere que os valores do atributo 'V11' que desviam significativamente da norma têm alta probabilidade de indicar uma transação fraudulenta.</p>
@@ -277,16 +317,23 @@ function Home() {
           <p>Após a fase de treinamento dos modelos de Machine Learning, a avaliação da importância de cada atributo foi efetuada por meio da técnica "Permutation Importance". Esta técnica envolve a aleatorização dos valores de cada atributo de forma independente, seguida da avaliação do impacto resultante na performance do modelo. Assim, a metodologia proporciona uma medida quantitativa do aumento no erro de previsão que ocorre quando a informação fornecida por um dado atributo é removida. Em outras palavras, a técnica busca responder à pergunta: "Qual a degradação no desempenho do modelo quando as informações de um determinado atributo são excluídas?".</p>
           <br/>
           <p>A análise das importâncias obtidas revela que os atributos 'V10' e 'V14' destacam-se em relação aos demais. Este resultado sugere que a remoção desses atributos pode comprometer significativamente a capacidade do modelo de identificar fraudes.</p>
+
+          <Plot
+          className='line_chart_graph'
+          data={data_original}
+          layout={{ barmode:"relative" ,width: 1400, height: 800, title: "Importância das Features Original", responsive: true, scrollZoom: true}}
+          />
+
           <Plot
           className='line_chart_graph'
           data={data_smote}
           layout={{ barmode:"relative",width: 1400, height: 800, title: "Importância das Features Smote", responsive: true, scrollZoom: true}}
           />
 
-        <Plot
+          <Plot
           className='line_chart_graph'
-          data={data_original}
-          layout={{ barmode:"relative" ,width: 1400, height: 800, title: "Importância das Features Original", responsive: true, scrollZoom: true}}
+          data={data_bsmote}
+          layout={{ barmode:"relative",width: 1400, height: 800, title: "Importância das Features BSmote", responsive: true, scrollZoom: true}}
           />
           <br/>
           <p className='home_data_analysis_subtitle'>Árvores de decisão</p>
@@ -309,12 +356,8 @@ function Home() {
           <p className='zoom_image_tree_title'>Árvore de decisão BSmote</p>
           <ImageZoom  src={bsmote_tree} alt="original tree" zoom="300"/>
           </div>
-
           </div>
-
       </div>
-
-      
     </div>
   );
 }

@@ -23,13 +23,12 @@
     text-align: justify;
 }
 
-.home_data_analysis_bsmote {
+.home_data_analysis_fraud_percentages {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     max-width: 1440px;
-    margin-bottom: 30px;
     text-align: justify;
 }
 
