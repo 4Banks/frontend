@@ -11,7 +11,51 @@
     justify-content: space-between;
     flex-direction: column;
     margin-top: 70px;
+}
+
+.market_search_title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiaryColor);
+    margin: 0px 0px 0px 30px;
+}
+
+.market_search_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 30px;
+}
+
+.eng_soft_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px;
+}
+
+.eng_soft_title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiaryColor);
+    margin-left: 30px;
+}
+
+.eng_soft_pipeline {
+    margin-bottom: 50px;
+    margin-top: 20px;
+    width: 90%;
+}
+
+.eng_soft_github_actions {
+    margin-top: 20px;
     margin-bottom: 30px;
+    width: 90%;
+}
+
+.market_search_container_image {
+    max-width: 500px;
 }
 
 .documentation_intro_title {
@@ -26,6 +70,47 @@
     justify-content: space-between;
     flex-direction: column;
     margin: 30px;
+}
+
+.documentation_product_discovery_container {
+    text-align: justify;
+    margin: 30px;
+}
+
+.documentation_product_discovery_product_vision {
+    width: 90%;
+}
+
+.documentation_product_discovery_itdoes {
+    width: 90%;
+}
+
+.documentation_product_discovery_itdoes_container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+}
+
+.documentation_bpmn {
+    margin: 30px;
+}
+
+.documentation_bpmn_container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 30px;
+}
+
+.documentation_bpmn_image {
+    width: 90%;
+}
+
+.documentation_product_discovery_product_vision_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .documentation_personas_container_text {
@@ -53,6 +138,17 @@
 
 .documentation_personas_list {
     margin: 0px 30px;
+}
+
+.documentation_product_discovery_list {
+    margin: 0px 30px;
+}
+
+.documentation_bpmn_title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--tertiaryColor);
+    margin-left: 30px;
 }
 
 .documentation_personas_title {

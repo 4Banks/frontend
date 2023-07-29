@@ -15,7 +15,14 @@ const DocumentationDescription = ({
       <p className="documentation_description_main_title">{mainTitle}</p>
       {mainDescription  &&(
       <div className="documentation_description_main">
-        <p className="documentation_description_main_text">{mainDescription}</p>
+        <p className="documentation_description_main_text"><p>
+                {mainDescription.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
+              </p></p>
       </div>
       )}
 
