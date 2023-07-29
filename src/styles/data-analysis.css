@@ -37,7 +37,7 @@
     font-size: 1.1rem;
     text-align: justify;
     color: var(--textColor);
-    margin-top: 30px;
+    margin: 15px 0px;
 }
 
 .data_analysis_intro_info_image_container {
