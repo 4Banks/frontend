@@ -32,6 +32,23 @@
     align-items: flex-start;
 }
 
+.documentation_description_container_image {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 20px;
+}
+
+.documentation_description_image {
+    display: flex;
+    width: 90%;
+    max-width: 1440px;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
 .documentation_description_info_left,
 .documentation_description_info_right {
     display: flex;
@@ -68,5 +85,9 @@
     .documentation_description_info_right {
         align-items: center;
         flex-basis: 100%;
+    }
+    .documentation_description_main_title {
+        font-size: 1.8rem;
+        margin: 0px;
     }
 }
