@@ -11,6 +11,7 @@ import MachineLearningPlot from '../../components/MachineLearningPlot';
 import ConfusionMatrixPlot from '../../components/ConfusionMatrixPlot';
 import FeatureImportancePlot from '../../components/FeatureImportancePlot';
 import DecisionTreePlot from '../../components/DecisionTreePlot';
+import { toast } from 'react-toastify';
 
 function DataAnalysis() {
   const ADDRESS = process.env.REACT_APP_ADDRESS;
@@ -19,7 +20,6 @@ function DataAnalysis() {
   const [uploadCompleted, setUploadCompleted] = useState(false);
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [loadingSuperficialAnalysis, setLoadingSuperficialAnalysis] = useState(false);
-  // const [loadingAnomalyDetection, setLoadingAnomalyDetection] = useState(false);
 
   const [mediaModaMedianaReady, setMediaModaMedianaReady] = useState(false);
   const [tracesMediaModaMediana, setTracesMediaModaMediana] = useState([]);
@@ -88,7 +88,6 @@ function DataAnalysis() {
     outlierDetectionSelected: [],
     analysisDataSelected: [],
     machineLearningSelected: [],
-    anomalyDetectionSelected: [],
   });
 
   const attributes = {
@@ -656,9 +655,6 @@ function DataAnalysis() {
         if(attributes.ml_decision_tree){
           handleDecisionTree(fileId,fileName);
         }
-        if(attributes.anomaly_detection){
-          // setLoadingAnomalyDetection(true);
-        }
       }
     } catch (error) {
       console.error('Error processing data:', error);
@@ -703,7 +699,11 @@ Experimente as diversas opções para seleção de amostragem e transformação 
           <div className="data_analysis_results">
             <div className="data_analysis_submit_button_container">
               <button className="data_analysis_submit_button" onClick={() => {
-                handleRequest(); 
+                if (selectedItems.analysisDataSelected.length > 0 || selectedItems.machineLearningSelected.length > 0) {
+                  handleRequest();
+                }else{
+                  toast.error("Selecione pelo menos uma análise superficial ou um algoritmo de aprendizado de máquina");
+                }
               }}>
               Analisar
               </button>
